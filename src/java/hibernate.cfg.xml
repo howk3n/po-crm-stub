@@ -50,6 +50,7 @@ Contributor(s):
     <property name="hibernate.connection.autocommit">true</property>
     <mapping class="models.Customer"/>
     <mapping class="models.Email"/>
+    <mapping class="models.Thread"/>
     <mapping class="models.Opportunity"/>
     <mapping class="models.Rep"/>
     <mapping class="models.Repcust"/>

@@ -30,6 +30,7 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(services.fetchInfo.class);
+        resources.add(services.sync.class);
     }
     
 }

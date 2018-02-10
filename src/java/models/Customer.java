@@ -70,8 +70,6 @@ public class Customer implements Serializable {
     private Collection<Repcust> repcustCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "customerId")
     private Collection<Opportunity> opportunityCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "customerId")
-    private Collection<Email> emailCollection;
 
     public Customer() {
     }
@@ -142,15 +140,6 @@ public class Customer implements Serializable {
 
     public void setOpportunityCollection(Collection<Opportunity> opportunityCollection) {
         this.opportunityCollection = opportunityCollection;
-    }
-
-    @XmlTransient
-    public Collection<Email> getEmailCollection() {
-        return emailCollection;
-    }
-
-    public void setEmailCollection(Collection<Email> emailCollection) {
-        this.emailCollection = emailCollection;
     }
 
     @Override

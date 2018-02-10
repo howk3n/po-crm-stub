@@ -33,19 +33,43 @@ public class fetchInfo {
     @Consumes(MediaType.APPLICATION_JSON)
     public String fetch(String jsonString) throws JSONException{
         
+//        example request:
+//{
+//	"addresses": [
+//		"custA@gmail.com",
+//		"custB@gmail.com",
+//		"custC@gmail.com"
+//	],
+//	"username": "djordjec",
+//	"signature": "1bc29b36f623ba82aaf6724fd3b16718"
+//}
+//
+//example response:
+//{
+//	"customerId": "123",
+//	"customerName": "Customer A",
+//	"opportunities": [
+//		{
+//			"amount": "10000",
+//			"date": "2018-03-14 00:00:00",
+//			"status": "PENDING"
+//		}
+//	]
+//}
+        
         JSONObject jRequest = new JSONObject(jsonString);
         JSONArray addresses = jRequest.getJSONArray("addresses");
         Customer customer = null;
         for(int i = 0; i < addresses.length(); i++){
             customer = Customer.selectQuery(addresses.getString(i));
-           
+            
             if(customer != null){
                 break;
             }
             
         }
         if(customer == null){
-            return "{\"status\": \"ERROR\",\"message\":\"No customers found for given addresses.\"}";
+            return "{\"status\": \"ERROR 404\",\"message\":\"No customers found for given addresses.\"}";
         }
         List<Opportunity> opportunities = Opportunity.selectQuery(customer.getId());
         

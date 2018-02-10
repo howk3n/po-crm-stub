@@ -6,7 +6,13 @@
 package models;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,6 +30,10 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 /**
  *
@@ -55,7 +65,8 @@ public class Email implements Serializable {
     private String sender;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 255)
+    @Lob
+    @Size(min = 1, max = 65535)
     @Column(name = "recipient")
     private String recipient;
     @Basic(optional = false)
@@ -78,9 +89,6 @@ public class Email implements Serializable {
     @Column(name = "date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
-    @JoinColumn(name = "customer_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Customer customerId;
 
     public Email() {
     }
@@ -89,11 +97,20 @@ public class Email implements Serializable {
         this.id = id;
     }
 
-    public Email(Integer id, String sender, String recipient, int threadId, String subject, String body, Date date) {
-        this.id = id;
+    public Email(String sender, String recipient, int threadId, String subject, String body, Date date) {
+        
         this.sender = sender;
         this.recipient = recipient;
         this.threadId = threadId;
+        this.subject = subject;
+        this.body = body;
+        this.date = date;
+    }
+    
+     public Email(String sender, String recipient, String subject, String body, Date date) {
+        
+        this.sender = sender;
+        this.recipient = recipient;
         this.subject = subject;
         this.body = body;
         this.date = date;
@@ -155,14 +172,6 @@ public class Email implements Serializable {
         this.date = date;
     }
 
-    public Customer getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Customer customerId) {
-        this.customerId = customerId;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -186,6 +195,114 @@ public class Email implements Serializable {
     @Override
     public String toString() {
         return "models.Email[ id=" + id + " ]";
+    }
+    
+    
+    
+    public static int findThread(String sender, String recipient, String subject, String body, String dateStr) throws Exception{
+        
+        Session session = HibernateUtil.createSessionFactory().openSession();
+        Transaction tx = null;
+        List<Email> emails = null;
+        try {
+            
+            Date date = parseDate(dateStr);
+            tx = session.beginTransaction();
+            
+            String queryString = "from Email e where e.sender = :senderParam and e.subject = :subjectParam and e.body = :bodyParam and e.recipient = :recipientParam and e.date = :dateParam";
+           
+            Query query = session.createQuery(queryString);
+           
+            query.setParameter("senderParam", sender);
+            query.setParameter("subjectParam", subject);
+            query.setParameter("bodyParam", body);
+            query.setParameter("dateParam", date);
+            query.setParameter("recipientParam", recipient);
+            System.out.println(date);
+            emails = query.list();
+            tx.commit();
+
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            if (tx != null) {
+                tx.rollback();
+            }
+        } finally {
+            session.close();
+        }
+        if(emails == null || emails.isEmpty()){
+            return 0;
+        }
+       
+        return emails.get(0).getThreadId();
+
+    }
+    
+    public static int insert(String sender, String recipient, String subject, String body, String dateStr){
+        
+        Session session = HibernateUtil.createSessionFactory().openSession();
+        Transaction tx = null;
+        int threadId = 0;
+        try {
+            
+            tx = session.beginTransaction();
+            
+            Email email = new Email(sender, recipient, subject, body, parseDate(dateStr));
+            email.setThreadId(email.getId());
+            session.persist(email);
+            threadId = email.getThreadId();
+           
+            tx.commit();
+
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            if (tx != null) {
+                tx.rollback();
+            }
+        } finally {
+            session.close();
+        }
+        
+        return threadId;
+
+    }
+    
+    public static String insert(int threadId, String sender, String recipient, String subject, String body, String dateStr){
+        
+       Session session = HibernateUtil.createSessionFactory().openSession();
+        Transaction tx = null;
+        try {
+            
+            tx = session.beginTransaction();
+            
+            Email email = new Email(sender, recipient, threadId, subject, body, parseDate(dateStr));
+            session.persist(email);
+           
+            tx.commit();
+
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            if (tx != null) {
+                tx.rollback();
+            }
+            return "ERROR";
+        } finally {
+            session.close();
+        }
+        
+        return "OK";
+
+    }
+    
+    private static Date parseDate(String dateStr){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = null;
+        try {
+            date = sdf.parse(dateStr);
+        } catch (ParseException ex) {
+            Logger.getLogger(Email.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return date;
     }
     
 }
