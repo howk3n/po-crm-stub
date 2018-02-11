@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package services;
+package com.mycompany.po_crm_stub.services;
 
 import java.util.List;
 import javax.servlet.ServletContext;
@@ -14,8 +14,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
-import models.Customer;
-import models.Opportunity;
+import com.mycompany.po_crm_stub.models.Customer;
+import com.mycompany.po_crm_stub.models.Opportunity;
 import org.json.*;
 
 @Path("/fetchInfo/")

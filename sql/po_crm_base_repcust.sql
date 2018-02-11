@@ -16,23 +16,13 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `repcust`
+-- Dumping data for table `repcust`
 --
 
-DROP TABLE IF EXISTS `repcust`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `repcust` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `rep_id` int(11) NOT NULL,
-  `customer_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `vk_repId_repcust_idx` (`rep_id`),
-  KEY `vk_customerId_repcust_idx` (`customer_id`),
-  CONSTRAINT `vk_customerId_repcust` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `vk_repId_repcust` FOREIGN KEY (`rep_id`) REFERENCES `rep` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+LOCK TABLES `repcust` WRITE;
+/*!40000 ALTER TABLE `repcust` DISABLE KEYS */;
+/*!40000 ALTER TABLE `repcust` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -43,4 +33,4 @@ CREATE TABLE `repcust` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-02-10 18:03:02
+-- Dump completed on 2018-02-11 17:33:32

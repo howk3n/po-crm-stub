@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package services;
+package com.mycompany.po_crm_stub.services;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,7 +20,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
-import models.Email;
+import com.mycompany.po_crm_stub.models.Email;
 import org.json.*;
 
 @Path("/sync/")
@@ -92,7 +92,7 @@ public class sync {
             for(int j = 0; j < recipients.length(); j++){
                 recipientsList.add(recipients.getString(j));
             }
-            recipientsList.sort(String::compareTo);
+            recipientsList.sort(String.CASE_INSENSITIVE_ORDER);
             StringBuilder sb = new StringBuilder();
             for (int j = 0; j < recipientsList.size(); j++){
                 if(j != 0){
@@ -126,28 +126,22 @@ public class sync {
             }
         }
         
+        System.out.println(threadId + " is it 0? that means a new thread will be made");
+        
         for(int i = 0; i < mails.size(); i++){
             
             HelperMail currentMail = mails.get(i);
             
             if(threadId == 0){
                 //                create new thread, and insert all mails
-                int newThreadId = 0;
-                if(i == 0){
-                    newThreadId = Email.insert(currentMail.getSender(), currentMail.getRecipient(), currentMail.getSubject(), currentMail.getBody(), currentMail.getDate());
-                }
-                else{
-                    Email.insert(newThreadId, currentMail.getSender(), currentMail.getRecipient(), currentMail.getSubject(), currentMail.getBody(), currentMail.getDate());
-                }
-                
+                threadId = Email.insert(currentMail.getSender(), currentMail.getRecipient(), currentMail.getSubject(), currentMail.getBody(), currentMail.getDate());
+
             }
             else{
-//                use threadIdMatch to update all mails except for mailsIdMatched with threadId
                 if(!mailsToSkip.contains(i)){
                     Email.insert(threadId, currentMail.getSender(), currentMail.getRecipient(), currentMail.getSubject(), currentMail.getBody(), currentMail.getDate());
                 }
             }
-            
         }
         
         return "{\"status\": \"OK\",\"message\":\"\"}";

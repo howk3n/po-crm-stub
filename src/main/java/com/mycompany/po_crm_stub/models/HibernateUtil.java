@@ -1,6 +1,4 @@
-package models;
-
-
+package com.mycompany.po_crm_stub.models;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -16,6 +14,12 @@ public class HibernateUtil {
         if(sessionFactory==null){
             Configuration configuration = new Configuration();
             configuration.configure();
+            configuration.addAnnotatedClass(com.mycompany.po_crm_stub.models.Customer.class);
+            configuration.addAnnotatedClass(com.mycompany.po_crm_stub.models.Email.class);
+            configuration.addAnnotatedClass(com.mycompany.po_crm_stub.models.Opportunity.class);
+            configuration.addAnnotatedClass(com.mycompany.po_crm_stub.models.Rep.class);
+            configuration.addAnnotatedClass(com.mycompany.po_crm_stub.models.Repcust.class);
+            configuration.addAnnotatedClass(com.mycompany.po_crm_stub.models.Thread.class);
             serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
             sessionFactory = configuration.buildSessionFactory(serviceRegistry);
         }

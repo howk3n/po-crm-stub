@@ -16,26 +16,14 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `email`
+-- Dumping data for table `email`
 --
 
-DROP TABLE IF EXISTS `email`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `email` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `customer_id` int(11) NOT NULL,
-  `sender` varchar(255) NOT NULL,
-  `recipient` varchar(255) NOT NULL,
-  `thread_id` int(11) NOT NULL,
-  `subject` varchar(255) NOT NULL,
-  `body` text NOT NULL,
-  `date` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `customer_id_idx` (`customer_id`),
-  CONSTRAINT `fk_customerId_email` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+LOCK TABLES `email` WRITE;
+/*!40000 ALTER TABLE `email` DISABLE KEYS */;
+INSERT INTO `email` VALUES (3,'custB@gmail.com','djordjec@gmail.com',1,'RE: A business offer...','something something cookies','2018-02-08 12:00:00'),(4,'djordjec@gmail.com','custB@gmail.com, dulbec@gmail.com',1,'A business offer...','something something dark side','2018-02-07 00:00:00');
+/*!40000 ALTER TABLE `email` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -46,4 +34,4 @@ CREATE TABLE `email` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-02-10 18:03:01
+-- Dump completed on 2018-02-11 17:33:32

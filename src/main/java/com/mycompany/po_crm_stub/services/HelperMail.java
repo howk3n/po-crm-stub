@@ -1,4 +1,4 @@
-package services;
+package com.mycompany.po_crm_stub.services;
 
 import java.util.ArrayList;
 import java.util.Date;

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package models;
+package com.mycompany.po_crm_stub.models;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -194,7 +194,7 @@ public class Email implements Serializable {
 
     @Override
     public String toString() {
-        return "models.Email[ id=" + id + " ]";
+        return "com.mycompany.po_crm_stub_maven.models.Email[ id=" + id + " ]";
     }
     
     
@@ -247,10 +247,11 @@ public class Email implements Serializable {
             
             tx = session.beginTransaction();
             
-            Email email = new Email(sender, recipient, subject, body, parseDate(dateStr));
+            Email email = new Email(sender, recipient, 0, subject, body, parseDate(dateStr));
+            session.persist(email);
             email.setThreadId(email.getId());
             session.persist(email);
-            threadId = email.getThreadId();
+            threadId = email.getId();
            
             tx.commit();
 

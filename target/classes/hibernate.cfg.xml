@@ -39,6 +39,8 @@ made subject to such option by the copyright holder.
 
 Contributor(s):
 -->
+
+
 <hibernate-configuration>
   <session-factory>
     <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
@@ -48,11 +50,5 @@ Contributor(s):
     <property name="hibernate.hbm2ddl.auto">update</property>
     <property name="hibernate.show_sql">true</property>
     <property name="hibernate.connection.autocommit">true</property>
-    <mapping class="models.Customer"/>
-    <mapping class="models.Email"/>
-    <mapping class="models.Thread"/>
-    <mapping class="models.Opportunity"/>
-    <mapping class="models.Rep"/>
-    <mapping class="models.Repcust"/>
   </session-factory>
 </hibernate-configuration>
