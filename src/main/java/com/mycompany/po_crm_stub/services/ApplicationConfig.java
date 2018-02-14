@@ -30,6 +30,7 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(com.mycompany.po_crm_stub.services.fetchInfo.class);
+        resources.add(com.mycompany.po_crm_stub.services.fetchThreads.class);
         resources.add(com.mycompany.po_crm_stub.services.sync.class);
     }
     

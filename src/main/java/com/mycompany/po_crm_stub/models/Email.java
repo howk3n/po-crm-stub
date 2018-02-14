@@ -306,4 +306,36 @@ public class Email implements Serializable {
         return date;
     }
     
+    public static List<Email> selectQuery(int threadId){
+        
+        List<Email> emailList = null;
+        Session session = HibernateUtil.createSessionFactory().openSession();
+        Transaction tx = null;
+
+        try {
+
+            tx = session.beginTransaction();
+
+            Query query = session.createQuery("from Email where thread_id = :threadIdParam");
+            query.setParameter("threadIdParam", threadId);
+            
+            emailList = query.list();
+
+            tx.commit();
+
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            if (tx != null) {
+                tx.rollback();
+            }
+        } finally {
+            session.close();
+        }
+        if(emailList.isEmpty()){
+            return null;
+        }
+
+        return emailList;
+    }
+    
 }

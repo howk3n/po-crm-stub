@@ -6,6 +6,7 @@
 package com.mycompany.po_crm_stub.models;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +18,10 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 /**
  *
@@ -86,6 +91,38 @@ public class Thread implements Serializable {
     @Override
     public String toString() {
         return "models.Thread[ id=" + id + " ]";
+    }
+    
+    public static List<Thread> selectThreads(int customerId){
+        
+        List<Thread> threadList = null;
+        Session session = HibernateUtil.createSessionFactory().openSession();
+        Transaction tx = null;
+
+        try {
+
+            tx = session.beginTransaction();
+
+            Query query = session.createQuery("from Thread where customer_id = :customerIdParam");
+            query.setParameter("customerIdParam", customerId);
+            
+            threadList = query.list();
+
+            tx.commit();
+
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            if (tx != null) {
+                tx.rollback();
+            }
+        } finally {
+            session.close();
+        }
+        if(threadList.isEmpty()){
+            return null;
+        }
+
+        return threadList;
     }
     
 }
