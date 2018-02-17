@@ -29,6 +29,7 @@ public class fetchThreads {
     @GET
     @Path("/{customerId}")
     public String fetch(@PathParam("customerId") Integer customerId) throws JSONException{
+//http://localhost:8084/PO_CRM_stub/api/fetchThreads/4
 
         List<Thread> threads = Thread.selectThreads(customerId);
         if(threads.isEmpty()){
@@ -39,20 +40,22 @@ public class fetchThreads {
         for(int i = 0; i < threads.size(); i++){
             mailThreads.add(Email.selectQuery(threads.get(i).getId()));
         }
+        s.append("<div style = 'margin:10px;'>");
         for(int i = 0; i < mailThreads.size(); i++){
             List<Email> currentThread = mailThreads.get(i);
-            s.append("Thread ID: ").append(currentThread.get(0).getThreadId()).append("<br><br>");
+            s.append("<span style='text-decoration:underline;font-weight:bold;'>Thread ").append(currentThread.get(0).getThreadId()).append("</span><br><br>");
             for(int j = 0; j < currentThread.size(); j++){
                 Email currentMail = currentThread.get(j);
+                s.append("<div style = 'border:solid 1px black; max-width:1024px; padding:15px; margin-bottom:10px;'>");
                 s.append("Thread ID: ").append(currentMail.getThreadId()).append("<br>");
                 s.append("Sender: ").append(currentMail.getSender()).append("<br>");
                 s.append("Recipient: ").append(currentMail.getRecipient()).append("<br>");
                 s.append("Subject: ").append(currentMail.getSubject()).append("<br>");
                 s.append("Body: ").append(currentMail.getBody()).append("<br>");
-                s.append("Date: ").append(currentMail.getDate()).append("<br><br>");
+                s.append("Date: ").append(currentMail.getDate()).append("</div>");
             }
         }
-
+        s.append("</div>");
         return s.toString();
 
     }
