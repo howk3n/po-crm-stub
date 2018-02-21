@@ -197,4 +197,36 @@ public class Customer implements Serializable {
         return customerList.get(0);
     }
     
+    public static List<Customer> selectAll(){
+    
+        List<Customer> customerList = null;
+        Session session = HibernateUtil.createSessionFactory().openSession();
+        Transaction tx = null;
+
+        try {
+
+            tx = session.beginTransaction();
+
+//            Query query = session.createQuery("from Customer where address1 = '" + address + "' or address2 = '" + address + "' or address3 = '" + address + "'");
+            Query query = session.getNamedQuery("Customer.findAll");
+            customerList = query.list();
+
+            tx.commit();
+
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            if (tx != null) {
+                tx.rollback();
+            }
+        } finally {
+            session.close();
+        }
+        if(customerList == null || customerList.isEmpty()){
+            return null;
+        }
+
+        return customerList;
+        
+    }
+    
 }

@@ -117,7 +117,7 @@ public class sync {
                     mailsToSkip.add(i);
                 }
             } catch (Exception ex) {
-                return "{\"status\": \"ERROR 400\",\"message\":\"" + ex.getMessage() + "\"}";
+                return "{\"status\": \"ERROR 500\",\"message\":\"" + ex.getMessage() + "\"}";
             }
         }
         

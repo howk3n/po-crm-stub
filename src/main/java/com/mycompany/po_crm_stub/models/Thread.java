@@ -124,7 +124,7 @@ public class Thread implements Serializable {
         } finally {
             session.close();
         }
-        if(threadList.isEmpty()){
+        if(threadList == null || threadList.isEmpty()){
             return null;
         }
 

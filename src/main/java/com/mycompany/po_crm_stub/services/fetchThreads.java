@@ -12,9 +12,11 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Path;
 import com.mycompany.po_crm_stub.models.Email;
 import com.mycompany.po_crm_stub.models.Thread;
+import com.mycompany.po_crm_stub.models.Customer;
 import java.util.ArrayList;
+import java.util.Objects;
 import javax.ws.rs.GET;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import org.json.*;
 
 @Path("/fetchThreads/")
@@ -27,34 +29,53 @@ public class fetchThreads {
     private ServletContext sContext; 
     
     @GET
-    @Path("/{customerId}")
-    public String fetch(@PathParam("customerId") Integer customerId) throws JSONException{
+    public String fetch(@QueryParam("customerId") Integer customerId) throws JSONException{
+//http://localhost:8084/PO_CRM_stub/api/fetchThreads?customerId=4
 
-        List<Thread> threads = Thread.selectThreads(customerId);
-        if(threads == null){
-            return "No threads";
-        }
-        ArrayList<List<Email>> mailThreads = new ArrayList();
         StringBuilder s = new StringBuilder();
-        for(int i = 0; i < threads.size(); i++){
-            mailThreads.add(Email.selectQuery(threads.get(i).getId()));
-        }
+        
         s.append("<div style = 'margin:10px;'>");
-        for(int i = 0; i < mailThreads.size(); i++){
-            List<Email> currentThread = mailThreads.get(i);
-            s.append("<span style='text-decoration:underline;font-weight:bold;'>Thread ").append(currentThread.get(0).getThreadId()).append("</span><br><br>");
-            for(int j = 0; j < currentThread.size(); j++){
-                Email currentMail = currentThread.get(j);
-                s.append("<div style = 'border:solid 1px black; max-width:1024px; padding:15px; margin-bottom:10px;'>");
-                s.append("Thread ID: ").append(currentMail.getThreadId()).append("<br>");
-                s.append("Sender: ").append(currentMail.getSender()).append("<br>");
-                s.append("Recipient: ").append(currentMail.getRecipient()).append("<br>");
-                s.append("Subject: ").append(currentMail.getSubject()).append("<br>");
-                s.append("Body: ").append(currentMail.getBody()).append("<br>");
-                s.append("Date: ").append(currentMail.getDate()).append("</div>");
+        s.append("Select customer:<form><select name=\"customerId\" onchange=\"this.form.submit();\"><option value = \"0\"></option>");
+        List<Customer> customerList = Customer.selectAll();
+        for(int i = 0; i < customerList.size(); i++){
+            Customer currentCustomer = customerList.get(i);
+            if(customerId == currentCustomer.getId()){
+                s.append("<option value = \"").append(currentCustomer.getId()).append("\" selected>").append(currentCustomer.getName()).append("</option>");
+            }
+            else{
+                s.append("<option value = \"").append(currentCustomer.getId()).append("\">").append(currentCustomer.getName()).append("</option>");
             }
         }
-        s.append("</div>");
+        s.append("</select></form><br />");
+            
+        if(customerId != null){
+            List<Thread> threads = Thread.selectThreads(customerId);
+            if(threads != null){
+                ArrayList<List<Email>> mailThreads = new ArrayList();
+            
+                for(int i = 0; i < threads.size(); i++){
+                    mailThreads.add(Email.selectQuery(threads.get(i).getId()));
+                }
+                for(int i = 0; i < mailThreads.size(); i++){
+                    List<Email> currentThread = mailThreads.get(i);
+                    s.append("<span style='text-decoration:underline;font-weight:bold;'>Thread ").append(currentThread.get(0).getThreadId().getId()).append("</span><br><br>");
+                    for(int j = 0; j < currentThread.size(); j++){
+                        Email currentMail = currentThread.get(j);
+                        s.append("<div style = 'border:solid 1px black; max-width:1024px; padding:15px; margin-bottom:10px;'>");
+                        s.append("Thread ID: ").append(currentMail.getThreadId().getId()).append("<br>");
+                        s.append("Sender: ").append(currentMail.getSender()).append("<br>");
+                        s.append("Recipient: ").append(currentMail.getRecipient()).append("<br>");
+                        s.append("Subject: ").append(currentMail.getSubject()).append("<br>");
+                        s.append("Body: ").append(currentMail.getBody()).append("<br>");
+                        s.append("Date: ").append(currentMail.getDate()).append("</div>");
+                    }
+                }
+                s.append("</div>");
+            }
+            
+        }
+        
+       
         return s.toString();
 
     }
