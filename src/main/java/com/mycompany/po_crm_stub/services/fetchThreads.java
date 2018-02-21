@@ -32,7 +32,7 @@ public class fetchThreads {
 //http://localhost:8084/PO_CRM_stub/api/fetchThreads/4
 
         List<Thread> threads = Thread.selectThreads(customerId);
-        if(threads.isEmpty()){
+        if(threads == null){
             return "No threads";
         }
         ArrayList<List<Email>> mailThreads = new ArrayList();

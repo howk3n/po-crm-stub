@@ -20,6 +20,12 @@ public class HibernateUtil {
             configuration.addAnnotatedClass(com.mycompany.po_crm_stub.models.Rep.class);
             configuration.addAnnotatedClass(com.mycompany.po_crm_stub.models.Repcust.class);
             configuration.addAnnotatedClass(com.mycompany.po_crm_stub.models.Thread.class);
+            String jdbcDbUrl = System.getenv("JDBC_DATABASE_URL");
+            if (null != jdbcDbUrl) {
+                configuration.setProperty("hibernate.connection.url", jdbcDbUrl);
+            } else {
+                configuration.setProperty("hibernate.connection.username", "root");
+            }
             serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
             sessionFactory = configuration.buildSessionFactory(serviceRegistry);
         }
