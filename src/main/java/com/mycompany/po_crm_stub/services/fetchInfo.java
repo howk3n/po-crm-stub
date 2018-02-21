@@ -32,31 +32,7 @@ public class fetchInfo {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public String fetch(String jsonString) throws JSONException{
-        
-//        example request:
-//{
-//	"addresses": [
-//		"custA@gmail.com",
-//		"custB@gmail.com",
-//		"custC@gmail.com"
-//	],
-//	"username": "djordjec",
-//	"signature": "1bc29b36f623ba82aaf6724fd3b16718"
-//}
-//
-//example response:
-//{
-//	"customerId": "123",
-//	"customerName": "Customer A",
-//	"opportunities": [
-//		{
-//			"amount": "10000",
-//			"date": "2018-03-14 00:00:00",
-//			"status": "PENDING"
-//		}
-//	]
-//}
-        
+
         JSONObject jRequest = new JSONObject(jsonString);
         JSONArray addresses = jRequest.getJSONArray("addresses");
         Customer customer = null;
@@ -73,7 +49,7 @@ public class fetchInfo {
         }
         List<Opportunity> opportunities = Opportunity.selectQuery(customer.getId());
         
-        JSONObject jObj = new JSONObject();
+        JSONObject jResponse = new JSONObject();
         
         JSONArray opportunitiesArray = null;
         if(!opportunities.isEmpty()){
@@ -90,11 +66,11 @@ public class fetchInfo {
             }
         }
         
-        jObj.put("customerId", customer.getId());
-        jObj.put("customerName", customer.getName());        
-        jObj.put("opportunities", opportunitiesArray);
+        jResponse.put("customerId", customer.getId());
+        jResponse.put("customerName", customer.getName());        
+        jResponse.put("opportunities", opportunitiesArray);
            
-        return jObj.toString();
+        return jResponse.toString();
         
     }
 }
