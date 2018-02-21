@@ -22,7 +22,6 @@ public class HibernateUtil {
             configuration.addAnnotatedClass(com.mycompany.po_crm_stub.models.Thread.class);
             String jdbcDbUrl = System.getenv("JDBC_DATABASE_URL");
             if (null != jdbcDbUrl) {
-                configuration.setProperty("hibernate.connection.username", null);
                 configuration.setProperty("hibernate.connection.url", jdbcDbUrl);
             }
             serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
