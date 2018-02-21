@@ -5,6 +5,7 @@
  */
 package com.mycompany.po_crm_stub.services;
 
+import com.mycompany.po_crm_stub.models.Customer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,7 +22,10 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import com.mycompany.po_crm_stub.models.Email;
+import com.mycompany.po_crm_stub.models.Thread;
 import org.json.*;
+
+
 
 @Path("/sync/")
 public class sync {
@@ -32,67 +36,53 @@ public class sync {
     @Context
     private ServletContext sContext; 
     
+    private static Date parseDate(String dateStr){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = null;
+        try {
+            date = sdf.parse(dateStr);
+        } catch (ParseException ex) {
+            Logger.getLogger(Email.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return date;
+    }
+    
     @POST
 //    @Produces(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public String sync(String jsonString) throws JSONException{
         
-//        example request:
-//{
-//	"messages": [
-//		{
-//			"sender": "djordjec@gmail.com",
-//			"recipient": [
-//                              "dulbec@gmail.com",
-//                              "custB@gmail.com",
-//                      ],
-//			"subject": "A business offer...",
-//			"body": "something something dark side",
-//			"date": "2018-02-07 00:00:00"
-//		},
-//		{
-//			"sender": "custB@gmail.com",
-//			"recipient": [
-//                          "djordjec@gmail.com",
-//                          "dublec@gmail.com"
-//                      ],
-//			"subject": "RE: A business offer...",
-//			"body": "something something cookies",
-//			"date": "2018-02-08 12:00:00"
-//		}
-//	],
-//	"username": "djordjec",
-//	"signature": "028ba9af611925a0064012a6e6fd765b"
-//}
-//
-//example response:
-//{
-//	"status": "OK",
-//	"message": ""
-//}
-        
+//      variables needed to return
+        int requested;
+        int inserted = 0;
+        int threadId;
+        ArrayList<Integer> emailId = new ArrayList<>();
+//        
 
         JSONObject jRequest = new JSONObject(jsonString);
         JSONArray messages = jRequest.getJSONArray("messages");
+        requested = messages.length();
         
-        if(messages.length()==0 || messages.isNull(0)){
-            return "{\"status\": \"ERROR 400\",\"message\":\"No messages recieved.\"}";
+        if(requested == 0 || messages.isNull(0)){
+            return "{\"status\": \"ERROR 400\",\"message\":\"No messages recieved in request.\"}";
         }
         
 //        Array of messages in request
-        ArrayList<HelperMail> mails = new ArrayList<HelperMail>();
-        
-//        adds each message in request into the ArrayList<HelperMail> mails
-        for(int i = 0; i < messages.length(); i++){
+        ArrayList<Email> mails = new ArrayList<>();
+//        only 1 customer in a thread
+        Customer customer = null;
+//        adds each message in request into the ArrayList<Email> mails
+        for(int i = 0; i < requested; i++){
             JSONObject message = messages.getJSONObject(i);
-            ArrayList<String> recipientsList = new ArrayList<String>();
+            ArrayList<String> recipientsList = new ArrayList<>();
             JSONArray recipients = message.getJSONArray("recipient");
             
             for(int j = 0; j < recipients.length(); j++){
                 recipientsList.add(recipients.getString(j));
             }
             recipientsList.sort(String.CASE_INSENSITIVE_ORDER);
+            
             StringBuilder sb = new StringBuilder();
             for (int j = 0; j < recipientsList.size(); j++){
                 if(j != 0){
@@ -100,25 +90,30 @@ public class sync {
                 }
                 sb.append(recipientsList.get(j));
             }
-            mails.add(new HelperMail(message.getString("sender"), sb.toString(), message.getString("subject"), message.getString("body"), message.getString("date")));
+            
+            mails.add(new Email(message.getString("sender"), sb.toString(), message.getString("subject"), message.getString("body"), parseDate(message.getString("date"))));
         }
         
-        int threadId = 0;
+        threadId = 0;
         
-        ArrayList<Integer> mailsToSkip = new ArrayList<Integer>();
-//        for each message in mails
+        ArrayList<Integer> mailsToSkip = new ArrayList<>();
+//      finds the threadId and customer
         for(int i = 0; i < mails.size(); i++){
             
-            HelperMail currentMail = mails.get(i);
-            int newThreadId;
+            Email currentMail = mails.get(i);
+            Thread newThread = null;
+            if(customer == null){
+                customer = Customer.selectQuery(currentMail.getSender());
+            }
+            
             try {
-//                returns 0 if thread doesn't exist, and threadId if it does
-                newThreadId = Email.findThread(currentMail.getSender(), currentMail.getRecipient(), currentMail.getSubject(), currentMail.getBody(), currentMail.getDate());
-                if(newThreadId != 0){
-                    if(newThreadId != threadId && threadId != 0){
-                        return "{\"status\": \"ERROR 400\",\"message\":\"Critical error, threads of given messages not matching, please check out DB.\"}";
+//                returns null if thread doesn't exist, and threadId if it does
+                newThread = Email.findThread(currentMail.getSender(), currentMail.getRecipient(), currentMail.getSubject(), currentMail.getBody(), currentMail.getDate());
+                if(newThread != null){
+                    if(newThread.getId() != threadId && threadId != 0){
+                        return "{\"status\": \"ERROR 400\",\"message\":\"Critical error; threads of given messages not matching.\"}";
                     }
-                    threadId = newThreadId;
+                    threadId = newThread.getId();
                     mailsToSkip.add(i);
                 }
             } catch (Exception ex) {
@@ -126,25 +121,42 @@ public class sync {
             }
         }
         
-        System.out.println(threadId + " is it 0? that means a new thread will be made");
+        if(customer == null){
+            return "{\"status\": \"ERROR 400\",\"message\":\"There seems to be no customer in the messages requested.\"}";
+        }
+//      Inserts all mails
         
+        Thread thread;
         for(int i = 0; i < mails.size(); i++){
             
-            HelperMail currentMail = mails.get(i);
+            if(mailsToSkip.contains(i)){
+                continue;
+            }
             
+            int mailId;
+            Email currentMail = mails.get(i);
+            Email newMail = null;
             if(threadId == 0){
-                //                create new thread, and insert all mails
-                threadId = Email.insert(currentMail.getSender(), currentMail.getRecipient(), currentMail.getSubject(), currentMail.getBody(), currentMail.getDate());
-
+                thread = Thread.insertThread(customer);
+                threadId = thread.getId();
             }
             else{
-                if(!mailsToSkip.contains(i)){
-                    Email.insert(threadId, currentMail.getSender(), currentMail.getRecipient(), currentMail.getSubject(), currentMail.getBody(), currentMail.getDate());
-                }
+                thread = Thread.findThreadByThreadId(threadId);
             }
+            newMail = Email.insert(currentMail.getSender(), currentMail.getRecipient(), thread, currentMail.getSubject(), currentMail.getBody(), currentMail.getDate());
+            inserted++;
+            emailId.add(newMail.getId());
         }
         
-        return "{\"status\": \"OK\",\"message\":\"\"}";
+        JSONObject jResponse = new JSONObject();
+        
+        jResponse.put("requested", requested);
+        jResponse.put("inserted", inserted);
+        jResponse.put("threadId", threadId);
+        JSONArray emailIdArray = new JSONArray(emailId);
+        jResponse.put("emailId", emailIdArray);
+           
+        return jResponse.toString();
         
     }
 }

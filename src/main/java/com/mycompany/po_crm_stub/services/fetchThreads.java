@@ -29,7 +29,6 @@ public class fetchThreads {
     @GET
     @Path("/{customerId}")
     public String fetch(@PathParam("customerId") Integer customerId) throws JSONException{
-//http://localhost:8084/PO_CRM_stub/api/fetchThreads/4
 
         List<Thread> threads = Thread.selectThreads(customerId);
         if(threads == null){

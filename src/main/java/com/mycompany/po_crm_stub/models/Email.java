@@ -69,10 +69,9 @@ public class Email implements Serializable {
     @Size(min = 1, max = 65535)
     @Column(name = "recipient")
     private String recipient;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "thread_id")
-    private int threadId;
+    @JoinColumn(name = "thread_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Thread threadId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
@@ -97,7 +96,7 @@ public class Email implements Serializable {
         this.id = id;
     }
 
-    public Email(String sender, String recipient, int threadId, String subject, String body, Date date) {
+    public Email(String sender, String recipient, Thread threadId, String subject, String body, Date date) {
         
         this.sender = sender;
         this.recipient = recipient;
@@ -140,11 +139,11 @@ public class Email implements Serializable {
         this.recipient = recipient;
     }
 
-    public int getThreadId() {
+    public Thread getThreadId() {
         return threadId;
     }
 
-    public void setThreadId(int threadId) {
+    public void setThreadId(Thread threadId) {
         this.threadId = threadId;
     }
 
@@ -199,14 +198,13 @@ public class Email implements Serializable {
     
     
     
-    public static int findThread(String sender, String recipient, String subject, String body, String dateStr) throws Exception{
+    public static Thread findThread(String sender, String recipient, String subject, String body, Date date) throws Exception{
         
         Session session = HibernateUtil.createSessionFactory().openSession();
         Transaction tx = null;
         List<Email> emails = null;
         try {
             
-            Date date = parseDate(dateStr);
             tx = session.beginTransaction();
             
             String queryString = "from Email e where e.sender = :senderParam and e.subject = :subjectParam and e.body = :bodyParam and e.recipient = :recipientParam and e.date = :dateParam";
@@ -231,52 +229,22 @@ public class Email implements Serializable {
             session.close();
         }
         if(emails == null || emails.isEmpty()){
-            return 0;
+            return null;
         }
-       
         return emails.get(0).getThreadId();
 
     }
     
-    public static int insert(String sender, String recipient, String subject, String body, String dateStr){
+    public static Email insert(String sender, String recipient, Thread thread, String subject, String body, Date date){
         
         Session session = HibernateUtil.createSessionFactory().openSession();
         Transaction tx = null;
-        int threadId = 0;
+        Email email = null;
         try {
             
             tx = session.beginTransaction();
             
-            Email email = new Email(sender, recipient, 0, subject, body, parseDate(dateStr));
-            session.persist(email);
-            email.setThreadId(email.getId());
-            session.persist(email);
-            threadId = email.getId();
-           
-            tx.commit();
-
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (tx != null) {
-                tx.rollback();
-            }
-        } finally {
-            session.close();
-        }
-        
-        return threadId;
-
-    }
-    
-    public static String insert(int threadId, String sender, String recipient, String subject, String body, String dateStr){
-        
-       Session session = HibernateUtil.createSessionFactory().openSession();
-        Transaction tx = null;
-        try {
-            
-            tx = session.beginTransaction();
-            
-            Email email = new Email(sender, recipient, threadId, subject, body, parseDate(dateStr));
+            email = new Email(sender, recipient, thread, subject, body, date);
             session.persist(email);
            
             tx.commit();
@@ -286,24 +254,12 @@ public class Email implements Serializable {
             if (tx != null) {
                 tx.rollback();
             }
-            return "ERROR";
+            return null;
         } finally {
             session.close();
         }
-        
-        return "OK";
+        return email;
 
-    }
-    
-    private static Date parseDate(String dateStr){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = null;
-        try {
-            date = sdf.parse(dateStr);
-        } catch (ParseException ex) {
-            Logger.getLogger(Email.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return date;
     }
     
     public static List<Email> selectQuery(int threadId){
@@ -334,7 +290,6 @@ public class Email implements Serializable {
         if(emailList.isEmpty()){
             return null;
         }
-
         return emailList;
     }
     

@@ -52,7 +52,9 @@ example request:
 		},
 		{
 			"sender": "custB@gmail.com",
-			"recipient": "djordjec@gmail.com",
+			"recipient": [
+                                "djordjec@gmail.com"
+                        ],
 			"subject": "RE: A business offer...",
 			"body": "something something cookies",
 			"date": "2018-02-08 12:00:00"

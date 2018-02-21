@@ -10,6 +10,8 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -37,8 +39,8 @@ public class Thread implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id")
     private Integer id;
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
@@ -50,6 +52,10 @@ public class Thread implements Serializable {
 
     public Thread(Integer id) {
         this.id = id;
+    }
+    
+    public Thread(Customer customerId){
+        this.customerId = customerId;
     }
 
     public Integer getId() {
@@ -123,6 +129,65 @@ public class Thread implements Serializable {
         }
 
         return threadList;
+    }
+    
+    public static Thread insertThread(Customer customer){
+        
+        Session session = HibernateUtil.createSessionFactory().openSession();
+        Transaction tx = null;
+        Thread thread = null;
+        try {
+
+            tx = session.beginTransaction();
+
+            thread = new Thread(customer);
+            session.persist(thread);
+            
+            tx.commit();
+
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            if (tx != null) {
+                tx.rollback();
+            }
+        } finally {
+            session.close();
+        }
+
+        return thread;
+        
+    }
+    
+    public static Thread findThreadByThreadId(int threadId){
+        
+        Session session = HibernateUtil.createSessionFactory().openSession();
+        Transaction tx = null;
+        List<Thread> threadList = null;
+        
+        try {
+
+            tx = session.beginTransaction();
+
+            Query query = session.createQuery("from Thread where id = :threadIdParam");
+            query.setParameter("threadIdParam", threadId);
+            
+            threadList = query.list();
+
+            tx.commit();
+
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            if (tx != null) {
+                tx.rollback();
+            }
+        } finally {
+            session.close();
+        }
+        if(threadList.isEmpty()){
+            return null;
+        }
+
+        return threadList.get(0);
     }
     
 }
