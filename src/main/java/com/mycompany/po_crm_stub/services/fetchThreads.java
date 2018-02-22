@@ -58,14 +58,13 @@ public class fetchThreads {
                 }
                 for(int i = 0; i < mailThreads.size(); i++){
                     List<Email> currentThread = mailThreads.get(i);
-                    s.append("<span style='text-decoration:underline;font-weight:bold;'>Thread ").append(currentThread.get(0).getThreadId().getId()).append("</span><br><br>");
+                    int currentThreadId = currentThread.get(0).getThreadId().getId();
+                    s.append("<span id = 'thread-").append(currentThreadId).append("' style='text-decoration:underline;font-weight:bold;'>").append(currentThread.get(0).getSubject()).append("</span><br><br>");
                     for(int j = 0; j < currentThread.size(); j++){
                         Email currentMail = currentThread.get(j);
                         s.append("<div style = 'border:solid 1px black; max-width:1024px; padding:15px; margin-bottom:10px;'>");
-                        s.append("Thread ID: ").append(currentMail.getThreadId().getId()).append("<br>");
-                        s.append("Sender: ").append(currentMail.getSender()).append("<br>");
-                        s.append("Recipient: ").append(currentMail.getRecipient()).append("<br>");
-                        s.append("Subject: ").append(currentMail.getSubject()).append("<br>");
+                        s.append("From: ").append(currentMail.getSender()).append("<br>");
+                        s.append("To: ").append(currentMail.getRecipient()).append("<br>");
                         s.append("Body: ").append(currentMail.getBody()).append("<br>");
                         s.append("Date: ").append(currentMail.getDate()).append("</div>");
                     }

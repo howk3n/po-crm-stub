@@ -48,7 +48,6 @@ public class sync {
     }
     
     @POST
-//    @Produces(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public String sync(String jsonString) throws JSONException{
@@ -61,11 +60,22 @@ public class sync {
 //        
 
         JSONObject jRequest = new JSONObject(jsonString);
+        
+        if(jRequest.keySet().size() != 3 || !jRequest.has("messages") || !jRequest.has("username") || !jRequest.has("signature")){
+            return "{\"status\": \"400\",\"message\":\"Bad request.\"}";
+        }
+        
         JSONArray messages = jRequest.getJSONArray("messages");
         requested = messages.length();
         
         if(requested == 0 || messages.isNull(0)){
             return "{\"status\": \"ERROR 400\",\"message\":\"No messages recieved in request.\"}";
+        }
+        for(int i = 0; i < messages.length(); i++){
+            JSONObject message = messages.getJSONObject(i);
+            if(message.keySet().size() != 5 || !message.has("sender") || !message.has("recipient") || !message.has("subject") || !message.has("body") || !message.has("date")){
+                return "{\"status\": \"400\",\"message\":\"Bad request.\"}";
+            }
         }
         
 //        Array of messages in request

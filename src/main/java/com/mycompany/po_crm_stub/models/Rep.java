@@ -7,6 +7,7 @@ package com.mycompany.po_crm_stub.models;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -22,6 +23,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 /**
  *
@@ -139,6 +144,37 @@ public class Rep implements Serializable {
     @Override
     public String toString() {
         return "models.Rep[ id=" + id + " ]";
+    }
+    
+    public static Rep findRepByUsername(String username){
+        Session session = HibernateUtil.createSessionFactory().openSession();
+        Transaction tx = null;
+        List<Rep> repList = null;
+        
+        try {
+
+            tx = session.beginTransaction();
+
+            Query query = session.createQuery("from Rep where username = :usernameParam");
+            query.setParameter("usernameParam", username);
+            
+            repList = query.list();
+
+            tx.commit();
+
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            if (tx != null) {
+                tx.rollback();
+            }
+        } finally {
+            session.close();
+        }
+        if(repList.isEmpty()){
+            return null;
+        }
+
+        return repList.get(0);
     }
     
 }

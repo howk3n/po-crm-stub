@@ -28,12 +28,16 @@ public class fetchInfo {
     private ServletContext sContext; 
     
     @POST
-//    @Produces(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public String fetch(String jsonString) throws JSONException{
 
         JSONObject jRequest = new JSONObject(jsonString);
+        
+        if(jRequest.keySet().size() != 3 || !jRequest.has("addresses") || !jRequest.has("username") || !jRequest.has("signature")){
+            return "{\"status\": \"400\",\"message\":\"Bad request.\"}";
+        }
+        
         JSONArray addresses = jRequest.getJSONArray("addresses");
         Customer customer = null;
         for(int i = 0; i < addresses.length(); i++){
@@ -45,7 +49,7 @@ public class fetchInfo {
             
         }
         if(customer == null){
-            return "{\"status\": \"ERROR 404\",\"message\":\"No customers found for given addresses.\"}";
+            return "{\"status\": \"ERROR 400\",\"message\":\"No customers found for given addresses.\"}";
         }
         List<Opportunity> opportunities = Opportunity.selectQuery(customer.getId());
         
