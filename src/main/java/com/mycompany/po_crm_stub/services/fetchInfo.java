@@ -31,50 +31,58 @@ public class fetchInfo {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public String fetch(String jsonString) throws JSONException{
+        try{
 
-        JSONObject jRequest = new JSONObject(jsonString);
-        
-        if(jRequest.keySet().size() != 3 || !jRequest.has("addresses") || !jRequest.has("username") || !jRequest.has("signature")){
-            return "{\"status\": \"400\",\"message\":\"Bad request.\"}";
-        }
-        
-        JSONArray addresses = jRequest.getJSONArray("addresses");
-        Customer customer = null;
-        for(int i = 0; i < addresses.length(); i++){
-            customer = Customer.selectQuery(addresses.getString(i));
-            
-            if(customer != null){
-                break;
+            JSONObject jRequest = new JSONObject(jsonString);
+
+            if(jRequest.keySet().size() != 3 || !jRequest.has("addresses") || !jRequest.has("username") || !jRequest.has("signature")){
+                return "{\"status\":\"400\",\"message\":\"Bad request.\"}";
             }
             
-        }
-        if(customer == null){
-            return "{\"status\": \"ERROR 400\",\"message\":\"No customers found for given addresses.\"}";
-        }
-        List<Opportunity> opportunities = Opportunity.selectQuery(customer.getId());
-        
-        JSONObject jResponse = new JSONObject();
-        
-        JSONArray opportunitiesArray = null;
-        if(!opportunities.isEmpty()){
-            opportunitiesArray = new JSONArray();
-            JSONObject opportunityObject;
-            for(int i = 0; i < opportunities.size(); i++){
-                Opportunity opportunity = opportunities.get(i);
-                opportunityObject = new JSONObject();
-                
-                opportunityObject.put("amount", opportunity.getAmount());
-                opportunityObject.put("date", opportunity.getDate());
-                opportunityObject.put("status", opportunity.getStatus());
-                opportunitiesArray.put(opportunityObject);
+            AuthenticationManager.authenticate(jRequest);
+
+            JSONArray addresses = jRequest.getJSONArray("addresses");
+            Customer customer = null;
+            for(int i = 0; i < addresses.length(); i++){
+                customer = Customer.selectQuery(addresses.getString(i));
+
+                if(customer != null){
+                    break;
+                }
+
             }
+            if(customer == null){
+                return "{\"status\":\"400\",\"message\":\"No customers found for given addresses.\"}";
+            }
+
+            List<Opportunity> opportunities = Opportunity.selectQuery(customer.getId());
+
+            JSONObject jResponse = new JSONObject();
+
+            JSONArray opportunitiesArray = null;
+            if(!opportunities.isEmpty()){
+                opportunitiesArray = new JSONArray();
+                JSONObject opportunityObject;
+                for(int i = 0; i < opportunities.size(); i++){
+                    Opportunity opportunity = opportunities.get(i);
+                    opportunityObject = new JSONObject();
+
+                    opportunityObject.put("amount", opportunity.getAmount());
+                    opportunityObject.put("date", opportunity.getDate());
+                    opportunityObject.put("status", opportunity.getStatus());
+                    opportunitiesArray.put(opportunityObject);
+                }
+            }
+
+            jResponse.put("customerId", customer.getId());
+            jResponse.put("customerName", customer.getName());        
+            jResponse.put("opportunities", opportunitiesArray);
+
+            return jResponse.toString();
+        }catch(AuthenticationFailedException ex){
+            return "{\"status\":\"403\",\"message\":\"" + ex.getMessage() + "\"}";
+        }catch(Exception e){
+            return "{\"status\":\"500\",\"message\":\"" + e.getMessage() + "\"}";
         }
-        
-        jResponse.put("customerId", customer.getId());
-        jResponse.put("customerName", customer.getName());        
-        jResponse.put("opportunities", opportunitiesArray);
-           
-        return jResponse.toString();
-        
     }
 }

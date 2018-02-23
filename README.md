@@ -44,7 +44,7 @@ example request:
 			"sender": "djordjec@gmail.com",
 			"recipient": [
 				"dulbec@gmail.com",
-				 "custB@gmail.com"
+				"custB@gmail.com"
 			],
 			"subject": "A business offer...",
 			"body": "something something dark side",
