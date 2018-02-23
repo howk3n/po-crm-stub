@@ -272,7 +272,7 @@ public class Email implements Serializable {
 
             tx = session.beginTransaction();
 
-            Query query = session.createQuery("from Email where thread_id = :threadIdParam");
+            Query query = session.createQuery("from Email where thread_id = :threadIdParam order by date asc");
             query.setParameter("threadIdParam", threadId);
             
             emailList = query.list();

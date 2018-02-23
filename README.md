@@ -77,3 +77,24 @@ example response:
       ]
 }
 ```
+
+-----------------
+
+### 3. POST /api/login
+
+example request:
+```
+{
+	"username": "djordjec",
+	"signature": "028ba9af611925a0064012a6e6fd765b"
+}
+```
+
+example response:
+```
+{
+      "status": "OK",
+      "message": ""
+}
+```
+
