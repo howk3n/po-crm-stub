@@ -167,7 +167,7 @@ public class Customer implements Serializable {
         return "models.Customer[ id=" + id + " ]";
     }
     
-    public static Customer selectQuery(String address){
+    public static Customer selectQuery(String address, String username){
         List<Customer> customerList = null;
         Session session = HibernateUtil.createSessionFactory().openSession();
         Transaction tx = null;
@@ -175,8 +175,15 @@ public class Customer implements Serializable {
         try {
 
             tx = session.beginTransaction();
-
-            Query query = session.createQuery("from Customer where address1 = '" + address + "' or address2 = '" + address + "' or address3 = '" + address + "'");
+            Rep rep = Rep.findRepByUsername(username);
+            
+            Query query = null;
+            if(rep.getAdmin()){
+                query = session.createQuery("from Customer where address1 = '" + address + "' or address2 = '" + address + "' or address3 = '" + address + "'");
+            }
+            else{
+                query = session.createQuery("select c from Customer c inner join c.repcustCollection r where r.repId = '" + rep.getId() + "' and (c.address1 = '" + address + "' or c.address2 = '" + address + "' or c.address3 = '" + address + "')");
+            }
             
             customerList = query.list();
 

@@ -41,10 +41,11 @@ public class fetchInfo {
             
             AuthenticationManager.authenticate(jRequest);
 
+            String username = jRequest.getString("username");
             JSONArray addresses = jRequest.getJSONArray("addresses");
             Customer customer = null;
             for(int i = 0; i < addresses.length(); i++){
-                customer = Customer.selectQuery(addresses.getString(i));
+                customer = Customer.selectQuery(addresses.getString(i), username);
 
                 if(customer != null){
                     break;

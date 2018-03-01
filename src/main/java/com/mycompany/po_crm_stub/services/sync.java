@@ -59,6 +59,7 @@ public class sync {
             ArrayList<Integer> emailId = new ArrayList<>();
 
             JSONObject jRequest = new JSONObject(jsonString);
+            
 
             if(jRequest.keySet().size() != 3 || !jRequest.has("messages") || !jRequest.has("username") || !jRequest.has("signature")){
                 return "{\"status\":\"400\",\"message\":\"Bad request.\"}";
@@ -78,6 +79,7 @@ public class sync {
             
             AuthenticationManager.authenticate(jRequest);
 
+            String username = jRequest.getString("username");
     //        Array of messages in request
             ArrayList<Email> mails = new ArrayList<>();
     //        only 1 customer in a thread
@@ -113,11 +115,10 @@ public class sync {
                 Email currentMail = mails.get(i);
                 Thread newThread = null;
                 if(customer == null){
-                    customer = Customer.selectQuery(currentMail.getSender());
+                    customer = Customer.selectQuery(currentMail.getSender(), username);
                 }
 
-
-    //          returns null if thread doesn't exist, and threadId if it does
+    //          returns null if thread doesn't exist
                 newThread = Email.findThread(currentMail.getSender(), currentMail.getRecipient(), currentMail.getSubject(), currentMail.getBody(), currentMail.getDate());
                 if(newThread != null){
                     if(newThread.getId() != threadId && threadId != 0){
@@ -132,8 +133,8 @@ public class sync {
             if(customer == null){
                 return "{\"status\":\"400\",\"message\":\"There seems to be no customer in the messages requested.\"}";
             }
+            
     //      Inserts all mails
-
             Thread thread;
             for(int i = 0; i < mails.size(); i++){
 
