@@ -54,7 +54,7 @@ public class fetchThreads {
                 ArrayList<List<Email>> mailThreads = new ArrayList();
             
                 for(int i = 0; i < threads.size(); i++){
-                    mailThreads.add(Email.selectQuery(threads.get(i).getId()));
+                    mailThreads.add(Email.findByThreadId(threads.get(i).getId()));
                 }
                 for(int i = 0; i < mailThreads.size(); i++){
                     List<Email> currentThread = mailThreads.get(i);
@@ -73,7 +73,6 @@ public class fetchThreads {
             }
             
         }
-        
        
         return s.toString();
 

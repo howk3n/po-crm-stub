@@ -6,8 +6,10 @@
 package com.mycompany.po_crm_stub.models;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,9 +19,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -36,6 +40,9 @@ import org.hibernate.Transaction;
     @NamedQuery(name = "Thread.findAll", query = "SELECT t FROM Thread t")
     , @NamedQuery(name = "Thread.findById", query = "SELECT t FROM Thread t WHERE t.id = :id")})
 public class Thread implements Serializable {
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "threadId")
+    private Collection<Email> emailCollection;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -72,6 +79,15 @@ public class Thread implements Serializable {
 
     public void setCustomerId(Customer customerId) {
         this.customerId = customerId;
+    }
+    
+    @XmlTransient
+    public Collection<Email> getEmailCollection() {
+        return emailCollection;
+    }
+
+    public void setEmailCollection(Collection<Email> emailCollection) {
+        this.emailCollection = emailCollection;
     }
 
     @Override
@@ -189,5 +205,5 @@ public class Thread implements Serializable {
 
         return threadList.get(0);
     }
-    
+
 }

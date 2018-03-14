@@ -47,9 +47,12 @@ public class login {
             AuthenticationManager.authenticate(jRequest);
             return "{\"status\":\"200\",\"message\":\"\"}";
             
-        }catch(AuthenticationFailedException ex){
-            return "{\"status\":\"403\",\"message\":\"" + ex.getMessage() + "\"}";
+        }catch(AuthenticationFailedException e){
+            return "{\"status\":\"403\",\"message\":\"" + e.getMessage() + "\"}";
+        }catch(JSONException e){
+            return "{\"status\":\"400\",\"message\":\"Bad request.\"}";
         }catch(Exception e){
+            e.printStackTrace();
             return "{\"status\":\"500\",\"message\":\"" + e.getMessage() + "\"}";
         }
         
