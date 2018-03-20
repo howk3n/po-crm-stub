@@ -122,7 +122,7 @@ public class sync {
                 newThread = Email.findThread(currentMail.getSender(), currentMail.getRecipient(), currentMail.getSubject(), currentMail.getBody(), currentMail.getDate());
                 if(newThread != null){
                     if(newThread.getId() != threadId && threadId != 0){
-                        return "{\"status\":\"400\",\"message\":\"Critical error; threads of given messages not matching.\"}";
+                        return "{\"status\":\"400\",\"message\":\"Requested messages are parts of different threads.\"}";
                     }
                     threadId = newThread.getId();
                     mailsToSkip.add(i);
@@ -131,7 +131,7 @@ public class sync {
             }
 
             if(customer == null){
-                return "{\"status\":\"400\",\"message\":\"There seems to be no customer in the messages requested.\"}";
+                return "{\"status\":\"400\",\"message\":\"There is no customer in the messages requested.\"}";
             }
             
     //      Inserts all mails

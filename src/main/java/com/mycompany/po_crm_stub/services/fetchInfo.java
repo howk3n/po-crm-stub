@@ -53,7 +53,7 @@ public class fetchInfo {
 
             }
             if(customer == null){
-                return "{\"status\":\"400\",\"message\":\"No customers found for given addresses.\"}";
+                return "{\"status\":\"404\",\"message\":\"No customers found for given addresses.\"}";
             }
 
             List<Opportunity> opportunities = Opportunity.selectQuery(customer.getId());

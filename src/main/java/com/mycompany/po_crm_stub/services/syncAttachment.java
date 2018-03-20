@@ -47,12 +47,11 @@ public class syncAttachment {
             int ord = jRequest.getInt("ord");
             String fileName = jRequest.getString("fileName");
             String fileContent = jRequest.getString("fileContent");
-//            byte[] fileContent = jRequest.get
 
             Email email = Email.findByEmailId(emailId);
             
             if(email == null){
-                return "{\"status\":\"400\",\"message\":\"Bad request. emailId not finding match.\"}";
+                return "{\"status\":\"404\",\"message\":\"No matches found for requested emailId.\"}";
             }
             
             Integer attachmentId = Attachment.insert(email, ord, fileName, fileContent);
