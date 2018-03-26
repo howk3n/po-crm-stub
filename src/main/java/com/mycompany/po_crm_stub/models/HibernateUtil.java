@@ -14,6 +14,7 @@ public class HibernateUtil {
         if(sessionFactory==null){
             Configuration configuration = new Configuration();
             configuration.configure();
+            configuration.addAnnotatedClass(com.mycompany.po_crm_stub.models.Attachment.class);
             configuration.addAnnotatedClass(com.mycompany.po_crm_stub.models.Customer.class);
             configuration.addAnnotatedClass(com.mycompany.po_crm_stub.models.Email.class);
             configuration.addAnnotatedClass(com.mycompany.po_crm_stub.models.Opportunity.class);

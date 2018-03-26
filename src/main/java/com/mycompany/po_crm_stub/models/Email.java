@@ -9,11 +9,13 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,12 +26,14 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -51,6 +55,9 @@ import org.hibernate.Transaction;
     , @NamedQuery(name = "Email.findBySubject", query = "SELECT e FROM Email e WHERE e.subject = :subject")
     , @NamedQuery(name = "Email.findByDate", query = "SELECT e FROM Email e WHERE e.date = :date")})
 public class Email implements Serializable {
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "emailId")
+    private Collection<Attachment> attachmentCollection;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -170,6 +177,15 @@ public class Email implements Serializable {
     public void setDate(Date date) {
         this.date = date;
     }
+    
+    @XmlTransient
+    public Collection<Attachment> getAttachmentCollection() {
+        return attachmentCollection;
+    }
+
+    public void setAttachmentCollection(Collection<Attachment> attachmentCollection) {
+        this.attachmentCollection = attachmentCollection;
+    }
 
     @Override
     public int hashCode() {
@@ -262,7 +278,7 @@ public class Email implements Serializable {
 
     }
     
-    public static List<Email> selectQuery(int threadId){
+    public static List<Email> findByThreadId(int threadId){
         
         List<Email> emailList = null;
         Session session = HibernateUtil.createSessionFactory().openSession();
@@ -291,6 +307,37 @@ public class Email implements Serializable {
             return null;
         }
         return emailList;
+    }
+    
+    public static Email findByEmailId(int emailId){
+        
+        List<Email> emails = null;
+        Session session = HibernateUtil.createSessionFactory().openSession();
+        Transaction tx = null;
+
+        try {
+
+            tx = session.beginTransaction();
+
+            Query query = session.createQuery("from Email where id = :idParam");
+            query.setParameter("idParam", emailId);
+            
+            emails = query.list();
+            
+            tx.commit();
+
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            if (tx != null) {
+                tx.rollback();
+            }
+        } finally {
+            session.close();
+        }
+        if(emails.isEmpty()){
+            return null;
+        }
+        return emails.get(0);
     }
     
 }

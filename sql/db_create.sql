@@ -1,3 +1,16 @@
+CREATE TABLE `attachment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `email_id` int(11) NOT NULL,
+  `ord` int(11) NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `file_content` blob NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_index_emailId_order` (`email_id`,`ord`),
+  KEY `email_id_attachment_idx` (`email_id`),
+  CONSTRAINT `FKhc5p8mivyu465d7qgww930w65` FOREIGN KEY (`email_id`) REFERENCES `email` (`id`),
+  CONSTRAINT `email_id_attachment` FOREIGN KEY (`email_id`) REFERENCES `email` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+
 CREATE TABLE `customer` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
@@ -19,7 +32,7 @@ CREATE TABLE `email` (
   KEY `fk_threadId_email_idx` (`thread_id`),
   CONSTRAINT `FKecwdg1ro99hjaw21rcjqav35w` FOREIGN KEY (`thread_id`) REFERENCES `thread` (`id`),
   CONSTRAINT `fk_threadId_email` FOREIGN KEY (`thread_id`) REFERENCES `thread` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `opportunity` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -38,8 +51,9 @@ CREATE TABLE `rep` (
   `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `admin` tinyint(1) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username_UNIQUE` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `repcust` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -52,7 +66,7 @@ CREATE TABLE `repcust` (
   CONSTRAINT `FKko6x3ihgjww5a1s4de8928yxv` FOREIGN KEY (`rep_id`) REFERENCES `rep` (`id`),
   CONSTRAINT `vk_customerId_repcust` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `vk_repId_repcust` FOREIGN KEY (`rep_id`) REFERENCES `rep` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `thread` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

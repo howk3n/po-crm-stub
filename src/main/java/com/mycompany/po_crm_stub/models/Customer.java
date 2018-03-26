@@ -44,6 +44,9 @@ import org.hibernate.Transaction;
     , @NamedQuery(name = "Customer.findByAddress3", query = "SELECT c FROM Customer c WHERE c.address3 = :address3")})
 public class Customer implements Serializable {
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "customerId")
+    private Collection<Thread> threadCollection;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -140,6 +143,15 @@ public class Customer implements Serializable {
 
     public void setOpportunityCollection(Collection<Opportunity> opportunityCollection) {
         this.opportunityCollection = opportunityCollection;
+    }
+    
+    @XmlTransient
+    public Collection<Thread> getThreadCollection() {
+        return threadCollection;
+    }
+
+    public void setThreadCollection(Collection<Thread> threadCollection) {
+        this.threadCollection = threadCollection;
     }
 
     @Override

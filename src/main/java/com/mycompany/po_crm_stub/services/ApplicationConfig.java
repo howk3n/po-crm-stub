@@ -33,6 +33,7 @@ public class ApplicationConfig extends Application {
         resources.add(com.mycompany.po_crm_stub.services.fetchThreads.class);
         resources.add(com.mycompany.po_crm_stub.services.login.class);
         resources.add(com.mycompany.po_crm_stub.services.sync.class);
+        resources.add(com.mycompany.po_crm_stub.services.syncAttachment.class);
     }
     
 }

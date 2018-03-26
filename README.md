@@ -97,4 +97,28 @@ example response:
       "message": ""
 }
 ```
+-----------------
+
+### 4. POST /api/syncAttachment
+
+example request:
+```
+{
+	"emailId": "111",
+	"ord":"0",
+	"fileName": "something.pdf",
+	"fileContent": "%PDF-1.3\n%ÿÿÿÿ\n8 0 obj\n<<\n/Type /ExtGState\n/ca 1\n>>\nendobj",
+	"username": "djordjec",
+	"signature": "1bc29b36f623ba82aaf6724fd3b16718"
+}
+```
+
+example response:
+```
+{
+	"status": "200",
+	"message": "",
+	"attachmentId": "789"
+}
+```
 
