@@ -60,9 +60,8 @@ public class fetchInfo {
 
             JSONObject jResponse = new JSONObject();
 
-            JSONArray opportunitiesArray = null;
+            JSONArray opportunitiesArray = new JSONArray();
             if(!opportunities.isEmpty()){
-                opportunitiesArray = new JSONArray();
                 JSONObject opportunityObject;
                 for(int i = 0; i < opportunities.size(); i++){
                     Opportunity opportunity = opportunities.get(i);
@@ -78,7 +77,7 @@ public class fetchInfo {
             jResponse.put("customerId", customer.getId());
             jResponse.put("customerName", customer.getName());        
             jResponse.put("opportunities", opportunitiesArray);
-
+            
             return jResponse.toString();
         }catch(AuthenticationFailedException e){
             return "{\"status\":\"403\",\"message\":\"" + e.getMessage() + "\"}";
