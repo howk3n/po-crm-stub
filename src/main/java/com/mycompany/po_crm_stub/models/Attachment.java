@@ -5,8 +5,8 @@
  */
 package com.mycompany.po_crm_stub.models;
 
-import com.mycompany.po_crm_stub.services.DuplicateResourceException;
 import java.io.Serializable;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,15 +22,14 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 
-/**
- *
- * @author Tamashimaru
- */
+import com.mycompany.po_crm_stub.services.DuplicateResourceException;
+
 @Entity
 @Table(name = "attachment")
 @XmlRootElement

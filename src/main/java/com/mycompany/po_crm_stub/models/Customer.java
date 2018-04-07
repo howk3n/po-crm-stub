@@ -28,10 +28,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-/**
- *
- * @author Tamashimaru
- */
 @Entity
 @Table(name = "customer")
 @XmlRootElement

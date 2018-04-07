@@ -5,9 +5,10 @@
  */
 package com.mycompany.po_crm_stub.services;
 
+import com.mycompany.po_crm_stub.authentication.AuthenticationFailedException;
+import com.mycompany.po_crm_stub.authentication.SyncAttachmentAuthenticationManager;
 import com.mycompany.po_crm_stub.models.Attachment;
 import com.mycompany.po_crm_stub.models.Email;
-import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
@@ -17,7 +18,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
-import org.hibernate.exception.ConstraintViolationException;
 import org.json.*;
 
 @Path("/syncAttachment/")
@@ -41,7 +41,7 @@ public class syncAttachment {
                 return "{\"status\":\"400\",\"message\":\"Bad request.\"}";
             }
             
-            AuthenticationManager.authenticate(jRequest);
+            (new SyncAttachmentAuthenticationManager()).authenticate(jRequest);
             
             int emailId = jRequest.getInt("emailId");
             int ord = jRequest.getInt("ord");

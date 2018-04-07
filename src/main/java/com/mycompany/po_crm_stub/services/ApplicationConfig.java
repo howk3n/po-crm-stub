@@ -6,12 +6,9 @@
 package com.mycompany.po_crm_stub.services;
 
 import java.util.Set;
+
 import javax.ws.rs.core.Application;
 
-/**
- *
- * @author Unit8
- */
 @javax.ws.rs.ApplicationPath("api")
 public class ApplicationConfig extends Application {
 

@@ -6,17 +6,24 @@
 package com.mycompany.po_crm_stub.services;
 
 import java.util.List;
+
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.Produces;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.mycompany.po_crm_stub.authentication.AuthenticationFailedException;
+import com.mycompany.po_crm_stub.authentication.FetchInfoAuthenticationManager;
 import com.mycompany.po_crm_stub.models.Customer;
 import com.mycompany.po_crm_stub.models.Opportunity;
-import org.json.*;
 
 @Path("/fetchInfo/")
 public class fetchInfo {
@@ -38,9 +45,10 @@ public class fetchInfo {
             if(jRequest.keySet().size() != 3 || !jRequest.has("addresses") || !jRequest.has("username") || !jRequest.has("signature")){
                 return "{\"status\":\"400\",\"message\":\"Bad request.\"}";
             }
-            
-            AuthenticationManager.authenticate(jRequest);
+            (new FetchInfoAuthenticationManager()).authenticate(jRequest);
 
+            System.out.println("YES");
+            
             String username = jRequest.getString("username");
             JSONArray addresses = jRequest.getJSONArray("addresses");
             Customer customer = null;

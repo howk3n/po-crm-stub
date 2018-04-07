@@ -3,15 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.po_crm_stub.services;
+package com.mycompany.po_crm_stub.authentication;
 
-/**
- *
- * @author Tamashimaru
- */
 public class AuthenticationFailedException extends Exception{
     
-    AuthenticationFailedException(String message) {
+	private static final long serialVersionUID = -301881626568875771L;
+
+	AuthenticationFailedException(String message) {
         super(message);
     }
     

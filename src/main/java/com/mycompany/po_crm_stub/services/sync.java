@@ -5,26 +5,31 @@
  */
 package com.mycompany.po_crm_stub.services;
 
-import com.mycompany.po_crm_stub.models.Customer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.Produces;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.mycompany.po_crm_stub.authentication.AuthenticationFailedException;
+import com.mycompany.po_crm_stub.authentication.SyncAuthenticationManager;
+import com.mycompany.po_crm_stub.models.Customer;
 import com.mycompany.po_crm_stub.models.Email;
 import com.mycompany.po_crm_stub.models.Thread;
-import org.json.*;
-
 
 
 @Path("/sync/")
@@ -77,7 +82,7 @@ public class sync {
                 return "{\"status\":\"400\",\"message\":\"No messages recieved in request.\"}";
             }
             
-            AuthenticationManager.authenticate(jRequest);
+            (new SyncAuthenticationManager()).authenticate(jRequest);
 
             String username = jRequest.getString("username");
     //        Array of messages in request

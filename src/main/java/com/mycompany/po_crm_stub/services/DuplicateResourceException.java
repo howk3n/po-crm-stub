@@ -5,10 +5,6 @@
  */
 package com.mycompany.po_crm_stub.services;
 
-/**
- *
- * @author Tamashimaru
- */
 public class DuplicateResourceException extends Exception {
     
     public DuplicateResourceException(String message) {

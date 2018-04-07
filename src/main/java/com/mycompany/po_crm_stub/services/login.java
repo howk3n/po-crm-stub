@@ -5,24 +5,20 @@
  */
 package com.mycompany.po_crm_stub.services;
 
-
-import com.mycompany.po_crm_stub.models.Rep;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.Produces;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import org.json.*;
-import javax.xml.bind.DatatypeConverter;
+import javax.ws.rs.core.UriInfo;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.mycompany.po_crm_stub.authentication.AuthenticationFailedException;
+import com.mycompany.po_crm_stub.authentication.LoginAuthenticationManager;
 
 
 @Path("/login/")
@@ -44,7 +40,7 @@ public class login {
                 return "{\"status\":\"400\",\"message\":\"Bad request.\"}";
             }
 
-            AuthenticationManager.authenticate(jRequest);
+            (new LoginAuthenticationManager()).authenticate(jRequest);
             return "{\"status\":\"200\",\"message\":\"\"}";
             
         }catch(AuthenticationFailedException e){

@@ -5,19 +5,21 @@
  */
 package com.mycompany.po_crm_stub.services;
 
+import java.util.ArrayList;
 import java.util.List;
+
 import javax.servlet.ServletContext;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.Path;
+
+import org.json.JSONException;
+
+import com.mycompany.po_crm_stub.models.Customer;
 import com.mycompany.po_crm_stub.models.Email;
 import com.mycompany.po_crm_stub.models.Thread;
-import com.mycompany.po_crm_stub.models.Customer;
-import java.util.ArrayList;
-import java.util.Objects;
-import javax.ws.rs.GET;
-import javax.ws.rs.QueryParam;
-import org.json.*;
 
 @Path("/fetchThreads/")
 public class fetchThreads {
