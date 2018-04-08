@@ -5,23 +5,25 @@
  */
 package com.mycompany.po_crm_stub.services;
 
+import javax.servlet.ServletContext;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.mycompany.po_crm_stub.authentication.AuthenticationFailedException;
-import com.mycompany.po_crm_stub.authentication.SyncAttachmentAuthenticationManager;
+import com.mycompany.po_crm_stub.authentication.AuthenticationManager;
 import com.mycompany.po_crm_stub.models.Attachment;
 import com.mycompany.po_crm_stub.models.Email;
 
-import javax.servlet.ServletContext;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.Produces;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.MediaType;
-import org.json.*;
-
 @Path("/syncAttachment/")
-public class syncAttachment {
+public class SyncAttachment {
 
     @Context
     private UriInfo context;
@@ -41,7 +43,7 @@ public class syncAttachment {
                 return "{\"status\":\"400\",\"message\":\"Bad request.\"}";
             }
             
-            (new SyncAttachmentAuthenticationManager()).authenticate(jRequest);
+            (new AuthenticationManager()).authenticate(jRequest, jsonString);
             
             int emailId = jRequest.getInt("emailId");
             int ord = jRequest.getInt("ord");

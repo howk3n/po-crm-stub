@@ -22,7 +22,7 @@ import com.mycompany.po_crm_stub.models.Email;
 import com.mycompany.po_crm_stub.models.Thread;
 
 @Path("/fetchThreads/")
-public class fetchThreads {
+public class FetchThreads {
 
     @Context
     private UriInfo context;

@@ -9,28 +9,35 @@ import org.json.JSONObject;
 
 import com.mycompany.po_crm_stub.models.Rep;
 
-public abstract class AuthenticationManager {
+public class AuthenticationManager {
     
-    protected abstract String prepJsonForSigning(JSONObject jRequest);
-    
-    public void authenticate(JSONObject jRequest) throws Exception{
+    public void authenticate(JSONObject jRequest, String jsonString) throws Exception{
         
+//    	System.out.println(jRequest.toString());
+    	
         Rep rep = Rep.findRepByUsername(jRequest.getString("username"));
         if(rep == null){
+        	System.out.println("Rep not found: " + jRequest.getString("username"));
             throw new AuthenticationFailedException("Forbidden.");
         }
         
         String signature = jRequest.getString("signature");
+        
 //        remove this
         String masterSig = "E25FEE9B30162EA31A5498F3B61F8CC5AB29667F8736F4E7229D0A11AC059B69";
         if(signature.equals(masterSig)){
             return;
         }
-        jRequest.remove("signature");
+//        
+        
+//        jRequest.remove("signature");
         
 //        String prep = jRequest.toString() + rep.getPassword();
-        String prep = prepJsonForSigning(jRequest) + rep.getPassword();
-//        System.out.println(prep);
+//        String prep = prepJsonForSigning(jRequest) + rep.getPassword();
+        String prep = jsonString.replaceAll(",\"signature\":\"" + signature + "\"", "");
+        prep = prep + rep.getPassword();
+        
+        System.out.println(prep);
         MessageDigest digest;
         
         digest = MessageDigest.getInstance("SHA-256");
@@ -40,6 +47,8 @@ public abstract class AuthenticationManager {
 //        System.out.println(hashString);
         
         if(!signature.toUpperCase().equals(hashString)){
+        	System.out.println("Request signature: " + signature);
+        	System.out.println("Calculated signature: " + hashString);
             throw new AuthenticationFailedException("Forbidden.");
         }
     

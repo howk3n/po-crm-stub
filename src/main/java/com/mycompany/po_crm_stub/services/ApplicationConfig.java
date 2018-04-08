@@ -26,11 +26,11 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(com.mycompany.po_crm_stub.services.fetchInfo.class);
-        resources.add(com.mycompany.po_crm_stub.services.fetchThreads.class);
-        resources.add(com.mycompany.po_crm_stub.services.login.class);
-        resources.add(com.mycompany.po_crm_stub.services.sync.class);
-        resources.add(com.mycompany.po_crm_stub.services.syncAttachment.class);
+        resources.add(com.mycompany.po_crm_stub.services.FetchInfo.class);
+        resources.add(com.mycompany.po_crm_stub.services.FetchThreads.class);
+        resources.add(com.mycompany.po_crm_stub.services.Login.class);
+        resources.add(com.mycompany.po_crm_stub.services.Sync.class);
+        resources.add(com.mycompany.po_crm_stub.services.SyncAttachment.class);
     }
     
 }

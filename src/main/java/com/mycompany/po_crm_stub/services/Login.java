@@ -18,11 +18,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.mycompany.po_crm_stub.authentication.AuthenticationFailedException;
-import com.mycompany.po_crm_stub.authentication.LoginAuthenticationManager;
+import com.mycompany.po_crm_stub.authentication.AuthenticationManager;
 
 
 @Path("/login/")
-public class login {
+public class Login {
 
     @Context
     private UriInfo context;
@@ -39,8 +39,8 @@ public class login {
             if(jRequest.keySet().size() != 2 || !jRequest.has("username") || !jRequest.has("signature")){
                 return "{\"status\":\"400\",\"message\":\"Bad request.\"}";
             }
-
-            (new LoginAuthenticationManager()).authenticate(jRequest);
+            
+            (new AuthenticationManager()).authenticate(jRequest, jsonString);
             return "{\"status\":\"200\",\"message\":\"\"}";
             
         }catch(AuthenticationFailedException e){

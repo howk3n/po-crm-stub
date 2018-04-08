@@ -26,14 +26,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.mycompany.po_crm_stub.authentication.AuthenticationFailedException;
-import com.mycompany.po_crm_stub.authentication.SyncAuthenticationManager;
+import com.mycompany.po_crm_stub.authentication.AuthenticationManager;
 import com.mycompany.po_crm_stub.models.Customer;
 import com.mycompany.po_crm_stub.models.Email;
 import com.mycompany.po_crm_stub.models.Thread;
 
 
 @Path("/sync/")
-public class sync {
+public class Sync {
 
     @Context
     private UriInfo context;
@@ -82,7 +82,7 @@ public class sync {
                 return "{\"status\":\"400\",\"message\":\"No messages recieved in request.\"}";
             }
             
-            (new SyncAuthenticationManager()).authenticate(jRequest);
+            (new AuthenticationManager()).authenticate(jRequest, jsonString);
 
             String username = jRequest.getString("username");
     //        Array of messages in request

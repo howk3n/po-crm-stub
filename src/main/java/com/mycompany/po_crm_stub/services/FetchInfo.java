@@ -21,12 +21,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.mycompany.po_crm_stub.authentication.AuthenticationFailedException;
-import com.mycompany.po_crm_stub.authentication.FetchInfoAuthenticationManager;
+import com.mycompany.po_crm_stub.authentication.AuthenticationManager;
 import com.mycompany.po_crm_stub.models.Customer;
 import com.mycompany.po_crm_stub.models.Opportunity;
 
 @Path("/fetchInfo/")
-public class fetchInfo {
+public class FetchInfo {
 
     @Context
     private UriInfo context;
@@ -45,7 +45,7 @@ public class fetchInfo {
             if(jRequest.keySet().size() != 3 || !jRequest.has("addresses") || !jRequest.has("username") || !jRequest.has("signature")){
                 return "{\"status\":\"400\",\"message\":\"Bad request.\"}";
             }
-            (new FetchInfoAuthenticationManager()).authenticate(jRequest);
+            (new AuthenticationManager()).authenticate(jRequest, jsonString);
 
             System.out.println("YES");
             
