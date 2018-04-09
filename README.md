@@ -93,7 +93,7 @@ example request:
 example response:
 ```
 {
-      "status": "OK",
+      "status": "200",
       "message": ""
 }
 ```
