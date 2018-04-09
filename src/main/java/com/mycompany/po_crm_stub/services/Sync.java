@@ -141,27 +141,50 @@ public class Sync {
             
     //      Inserts all mails
             Thread thread;
-            for(int i = 0; i < mails.size(); i++){
+//            for(int i = 0; i < mails.size(); i++){
+//            	
+//            	Email currentMail = mails.get(i);
+//            	
+//                if(mailsToSkip.contains(i)){ 	
+//                    continue;
+//                }
+//                
+//                Email newMail = null;
+//                if(threadId == 0){
+//                    thread = Thread.insertThread(customer);
+//                    threadId = thread.getId();
+//                }
+//                else{
+//                    thread = Thread.findThreadByThreadId(threadId);
+//                }
+//                newMail = Email.insert(currentMail.getSender(), currentMail.getRecipient(), thread, currentMail.getSubject(), currentMail.getBody(), currentMail.getDate());
+//                inserted++;
+//                emailId.add(newMail.getId());
+//            }
 
-                if(mailsToSkip.contains(i)){
-                    continue;
-                }
-
-                int mailId;
-                Email currentMail = mails.get(i);
-                Email newMail = null;
-                if(threadId == 0){
-                    thread = Thread.insertThread(customer);
-                    threadId = thread.getId();
-                }
-                else{
-                    thread = Thread.findThreadByThreadId(threadId);
-                }
-                newMail = Email.insert(currentMail.getSender(), currentMail.getRecipient(), thread, currentMail.getSubject(), currentMail.getBody(), currentMail.getDate());
-                inserted++;
-                emailId.add(newMail.getId());
+            	for(int i = 0; i < mails.size(); i++){
+            	
+            		Email currentMail = mails.get(i);
+            		Email persistedMail = null;
+            		
+	                if(mailsToSkip.contains(i)){
+	                	persistedMail = Email.findEmail(currentMail.getSender(), currentMail.getRecipient(), currentMail.getSubject(), currentMail.getBody(), currentMail.getDate());
+	                }
+	                else {
+	                	if(threadId == 0){
+	                        thread = Thread.insertThread(customer);
+	                        threadId = thread.getId();
+	                    }
+	                    else{
+	                        thread = Thread.findThreadByThreadId(threadId);
+	                    }
+	                    persistedMail = Email.insert(currentMail.getSender(), currentMail.getRecipient(), thread, currentMail.getSubject(), currentMail.getBody(), currentMail.getDate());
+	                    inserted++;
+	                }
+	                emailId.add(persistedMail.getId());
+	                
             }
-
+            
             JSONObject jResponse = new JSONObject();
 
             jResponse.put("requested", requested);

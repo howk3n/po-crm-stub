@@ -209,6 +209,12 @@ public class Email implements Serializable {
     
     public static Thread findThread(String sender, String recipient, String subject, String body, Date date) throws Exception{
         
+        return findEmail(sender, recipient, subject, body, date).getThreadId();
+
+    }
+    
+    public static Email findEmail(String sender, String recipient, String subject, String body, Date date) throws Exception{
+        
         Session session = HibernateUtil.createSessionFactory().openSession();
         Transaction tx = null;
         List<Email> emails = null;
@@ -240,7 +246,7 @@ public class Email implements Serializable {
         if(emails == null || emails.isEmpty()){
             return null;
         }
-        return emails.get(0).getThreadId();
+        return emails.get(0);
 
     }
     
