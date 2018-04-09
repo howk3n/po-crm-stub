@@ -208,9 +208,11 @@ public class Email implements Serializable {
     
     
     public static Thread findThread(String sender, String recipient, String subject, String body, Date date) throws Exception{
-        
-        return findEmail(sender, recipient, subject, body, date).getThreadId();
-
+        Email email = findEmail(sender, recipient, subject, body, date);
+        if (email != null) {
+            return email.getThreadId();
+        }
+        return null;
     }
     
     public static Email findEmail(String sender, String recipient, String subject, String body, Date date) throws Exception{
