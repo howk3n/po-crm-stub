@@ -67,8 +67,8 @@ public class FetchThreads {
                         s.append("<div style = 'border:solid 1px black; max-width:1024px; padding:15px; margin-bottom:10px;'>");
                         s.append("From: ").append(currentMail.getSender()).append("<br>");
                         s.append("To: ").append(currentMail.getRecipient()).append("<br>");
-                        s.append("Body: ").append(currentMail.getBody()).append("<br>");
-                        s.append("Date: ").append(currentMail.getDate()).append("</div>");
+                        s.append("<br><div style='background-color:#eee;'>").append(currentMail.getBody()).append("</div><br>");
+                        s.append("Sent: ").append(currentMail.getDate()).append("</div>");
                     }
                 }
                 s.append("</div>");
