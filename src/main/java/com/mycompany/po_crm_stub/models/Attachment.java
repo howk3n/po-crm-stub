@@ -6,6 +6,7 @@
 package com.mycompany.po_crm_stub.models;
 
 import java.io.Serializable;
+import java.util.Base64;
 import java.util.List;
 
 import javax.persistence.Basic;
@@ -155,7 +156,9 @@ public class Attachment implements Serializable {
             
             tx = session.beginTransaction();
             
-            attachment = new Attachment(email, ord, fileName, fileContent.getBytes());
+            byte[] byteContent = Base64.getDecoder().decode(fileContent);
+            
+            attachment = new Attachment(email, ord, fileName, byteContent);
             session.persist(attachment);
            
             tx.commit();

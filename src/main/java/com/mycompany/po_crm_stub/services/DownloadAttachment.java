@@ -31,14 +31,11 @@ public class DownloadAttachment {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response download(@PathParam("attachmentId") Integer attachmentId){
     	
-//    	TODO: Fix empty download when attachment == null
     	try {
     		
     		final Attachment attachment = Attachment.findById(attachmentId);
 			if(attachment == null) {
-				
 				throw new Exception("Attachment with id: " + attachmentId + " not found in database");
-				
 			}else {
 				ResponseBuilder response = Response.ok(attachment.getFileContent());
 	    		System.out.println(new String(attachment.getFileContent()));
@@ -48,11 +45,12 @@ public class DownloadAttachment {
 			}			
 
     	}
-//    	TODO: Exception handling
+    	
     	catch(Exception e) {
     		e.printStackTrace();
+    		return Response.status(Response.Status.NOT_FOUND).build();
     	}
-		return null;
+		
     }  	
 }
 

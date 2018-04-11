@@ -3,7 +3,7 @@ CREATE TABLE `attachment` (
   `email_id` int(11) NOT NULL,
   `ord` int(11) NOT NULL,
   `file_name` varchar(255) NOT NULL,
-  `file_content` blob NOT NULL,
+  `file_content` longblob NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_index_emailId_order` (`email_id`,`ord`),
   KEY `email_id_attachment_idx` (`email_id`),
