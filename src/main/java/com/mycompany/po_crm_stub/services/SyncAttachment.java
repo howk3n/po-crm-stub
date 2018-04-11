@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import com.mycompany.po_crm_stub.authentication.AuthenticationFailedException;
 import com.mycompany.po_crm_stub.authentication.AuthenticationManager;
+import com.mycompany.po_crm_stub.authentication.DuplicateResourceException;
 import com.mycompany.po_crm_stub.models.Attachment;
 import com.mycompany.po_crm_stub.models.Email;
 

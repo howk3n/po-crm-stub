@@ -31,6 +31,7 @@ public class ApplicationConfig extends Application {
         resources.add(com.mycompany.po_crm_stub.services.Login.class);
         resources.add(com.mycompany.po_crm_stub.services.Sync.class);
         resources.add(com.mycompany.po_crm_stub.services.SyncAttachment.class);
+        resources.add(com.mycompany.po_crm_stub.services.DownloadAttachment.class);
     }
     
 }

@@ -6,6 +6,7 @@
 package com.mycompany.po_crm_stub.models;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -24,11 +25,12 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 
-import com.mycompany.po_crm_stub.services.DuplicateResourceException;
+import com.mycompany.po_crm_stub.authentication.DuplicateResourceException;
 
 @Entity
 @Table(name = "attachment")
@@ -174,6 +176,70 @@ public class Attachment implements Serializable {
         }
         return attachment.getId();
 
+    }
+    
+    public static List<Attachment> findByEmail(Email email){
+        
+        List<Attachment> attachments = null;
+        Session session = HibernateUtil.createSessionFactory().openSession();
+        Transaction tx = null;
+
+        try {
+
+            tx = session.beginTransaction();
+
+            Query query = session.createQuery("from Attachment where email_id = :emailIdParam");
+            System.out.println(email.getId());
+            query.setParameter("emailIdParam", email.getId());
+            
+            attachments = query.list();
+            
+            tx.commit();
+
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            if (tx != null) {
+                tx.rollback();
+            }
+        } finally {
+            session.close();
+        }
+        if(attachments.isEmpty()){
+            return null;
+        }
+        return attachments;
+    }
+    
+    public static Attachment findById(int id) {
+    	
+    	List<Attachment> attachments = null;
+    	Session session = HibernateUtil.createSessionFactory().openSession();
+    	Transaction tx = null;
+    	
+    	try {
+
+            tx = session.beginTransaction();
+
+            Query query = session.createQuery("from Attachment where id = :idParam");
+            query.setParameter("idParam", id);
+            
+            attachments = query.list();
+            
+            tx.commit();
+
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            if (tx != null) {
+                tx.rollback();
+            }
+        } finally {
+            session.close();
+        }
+        if(attachments.isEmpty()){
+            return null;
+        }
+        return attachments.get(0);
+    	
     }
     
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.po_crm_stub.services;
+package com.mycompany.po_crm_stub.authentication;
 
 public class DuplicateResourceException extends Exception {
     
