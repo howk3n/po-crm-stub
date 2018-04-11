@@ -134,6 +134,29 @@ public class Sync {
                 }
 
             }
+            
+            if(customer == null) {
+            	for(int i = 0; i < mails.size(); i++) {
+//            		System.out.println("i Itteration #" + i);
+            		Email currentMail = mails.get(i);
+            		String[] recipients = currentMail.getRecipient().split(",");
+            		for(int j = 0; j < recipients.length; j++) {
+//            			System.out.println("j Itteration #" + j);
+//            			System.out.println(j + " recipient " + recipients[j]);
+            			customer = Customer.selectQuery(recipients[j].trim(), username);
+            			if(customer != null) {
+//            				System.out.println("Break from inner cycle (j)");
+            				break;
+            			}
+            		}
+            		if(customer != null) {
+//            			System.out.println("Break from outer cycle (i)");
+            			break;
+            		}
+            		
+            	}
+            }
+//            System.out.println(customer.getName());
 
             if(customer == null){
                 return "{\"status\":\"400\",\"message\":\"There is no customer in the messages requested.\"}";
@@ -141,48 +164,27 @@ public class Sync {
             
     //      Inserts all mails
             Thread thread;
-//            for(int i = 0; i < mails.size(); i++){
-//            	
-//            	Email currentMail = mails.get(i);
-//            	
-//                if(mailsToSkip.contains(i)){ 	
-//                    continue;
-//                }
-//                
-//                Email newMail = null;
-//                if(threadId == 0){
-//                    thread = Thread.insertThread(customer);
-//                    threadId = thread.getId();
-//                }
-//                else{
-//                    thread = Thread.findThreadByThreadId(threadId);
-//                }
-//                newMail = Email.insert(currentMail.getSender(), currentMail.getRecipient(), thread, currentMail.getSubject(), currentMail.getBody(), currentMail.getDate());
-//                inserted++;
-//                emailId.add(newMail.getId());
-//            }
-
-            	for(int i = 0; i < mails.size(); i++){
-            	
-            		Email currentMail = mails.get(i);
-            		Email persistedMail = null;
-            		
-	                if(mailsToSkip.contains(i)){
-	                	persistedMail = Email.findEmail(currentMail.getSender(), currentMail.getRecipient(), currentMail.getSubject(), currentMail.getBody(), currentMail.getDate());
-	                }
-	                else {
-	                	if(threadId == 0){
-	                        thread = Thread.insertThread(customer);
-	                        threadId = thread.getId();
-	                    }
-	                    else{
-	                        thread = Thread.findThreadByThreadId(threadId);
-	                    }
-	                    persistedMail = Email.insert(currentMail.getSender(), currentMail.getRecipient(), thread, currentMail.getSubject(), currentMail.getBody(), currentMail.getDate());
-	                    inserted++;
-	                }
-	                emailId.add(persistedMail.getId());
-	                
+        	for(int i = 0; i < mails.size(); i++){
+        	
+        		Email currentMail = mails.get(i);
+        		Email persistedMail = null;
+        		
+                if(mailsToSkip.contains(i)){
+                	persistedMail = Email.findEmail(currentMail.getSender(), currentMail.getRecipient(), currentMail.getSubject(), currentMail.getBody(), currentMail.getDate());
+                }
+                else {
+                	if(threadId == 0){
+                        thread = Thread.insertThread(customer);
+                        threadId = thread.getId();
+                    }
+                    else{
+                        thread = Thread.findThreadByThreadId(threadId);
+                    }
+                    persistedMail = Email.insert(currentMail.getSender(), currentMail.getRecipient(), thread, currentMail.getSubject(), currentMail.getBody(), currentMail.getDate());
+                    inserted++;
+                }
+                emailId.add(persistedMail.getId());
+                
             }
             
             JSONObject jResponse = new JSONObject();
