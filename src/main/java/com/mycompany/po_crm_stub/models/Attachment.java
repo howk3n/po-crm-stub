@@ -192,7 +192,6 @@ public class Attachment implements Serializable {
             tx = session.beginTransaction();
 
             Query query = session.createQuery("from Attachment where email_id = :emailIdParam");
-            System.out.println(email.getId());
             query.setParameter("emailIdParam", email.getId());
             
             attachments = query.list();
