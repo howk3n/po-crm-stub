@@ -130,6 +130,7 @@ paths:
           schema:
             type: "string"
             format: "text/html"
+            example: "<html><body>Select customer:<br/>...</body></html>"
         400:
           description: "Bad Request"
         404:
