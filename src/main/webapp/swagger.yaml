@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   title: "PO CRM Stub"
-  version: ""
+  version: "0.0.1"
   description: "This is an application used to simulate the API of a CRM system, as it might be called by an Outlook plugin client."
   contact:
     name: "GitHub Repository"
@@ -17,7 +17,8 @@ schemes:
 paths:
   /login:
     post:
-      summary: "Validate credentials against the database, and respond with success or failure"
+      summary: "Login"
+      description: "Validate credentials against the database, and respond with success or failure"
       consumes:
       - "application/json"
       produces:
@@ -40,7 +41,8 @@ paths:
             $ref: "#/definitions/ErrorResponse"
   /fetchInfo:
     post:
-      summary: "Fetch customer info about the first customer that matches any of the supplied addresses"
+      summary: "Fetch Info"
+      description: "Fetch customer info about the first customer that matches any of the supplied addresses"
       consumes:
       - "application/json"
       produces:
@@ -63,7 +65,8 @@ paths:
             $ref: "#/definitions/ErrorResponse"
   /sync:
     post:
-      summary: "Synchronizes an email thread to the database"
+      summary: "Sync"
+      description: "Synchronize an email thread to the database"
       consumes:
       - "application/json"
       produces:
@@ -86,7 +89,8 @@ paths:
             $ref: "#/definitions/ErrorResponse"
   /syncAttachment:
     post:
-      summary: "Synchronizes an email attachment to the database"
+      summary: "Sync Attachment"
+      description: "Synchronize an email attachment to the database"
       consumes:
       - "application/json"
       produces:
@@ -109,7 +113,8 @@ paths:
             $ref: "#/definitions/ErrorResponse"
   /fetchThreads:
     get:
-      summary: "Renders an HTML page with all the synced email conversations for the desired customer"
+      summary: "Fetch Threads"
+      description: "Render an HTML page with all the synced email conversations for the desired customer"
       produces:
       - "text/html"
       parameters:
