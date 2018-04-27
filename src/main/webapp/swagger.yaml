@@ -1,0 +1,314 @@
+swagger: "2.0"
+info:
+  title: "PO CRM Stub"
+  version: ""
+  description: "This is an application used to simulate the API of a CRM system, as it might be called by an Outlook plugin client."
+  contact:
+    name: "GitHub Repository"
+    url: "https://github.com/howk3n/po-crm-stub"
+  license:
+    name: "MIT"
+    url: "https://opensource.org/licenses/MIT"
+host: "po-crm-stub.herokuapp.com"
+basePath: "/api"
+schemes:
+- "http"
+- "https"
+paths:
+  /login:
+    post:
+      summary: "Validate credentials against the database, and respond with success or failure"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Username and signature"
+        required: true
+        schema:
+          $ref: "#/definitions/LoginRequest"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/StatusResponse"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /fetchInfo:
+    post:
+      summary: "Fetch customer info about the first customer that matches any of the supplied addresses"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Addresses array, username and signature"
+        required: true
+        schema:
+          $ref: "#/definitions/FetchInfoRequest"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/CustomerInfo"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /sync:
+    post:
+      summary: "Synchronizes an email thread to the database"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Messages array, username and signature"
+        required: true
+        schema:
+          $ref: "#/definitions/SyncRequest"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/SyncResponse"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /syncAttachment:
+    post:
+      summary: "Synchronizes an email attachment to the database"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Email ID, ord, file name, file content, username and signature"
+        required: true
+        schema:
+          $ref: "#/definitions/SyncAttachmentRequest"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/StatusResponse"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /fetchThreads:
+    get:
+      summary: "Renders an HTML page with all the synced email conversations for the desired customer"
+      produces:
+      - "text/html"
+      parameters:
+      - name: "customerId"
+        in: "query"
+        description: "The ID of the desired customer"
+        required: false
+        type: "integer"
+        format: "int32"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "string"
+            format: "text/html"
+        400:
+          description: "Bad Request"
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal Server Error"
+definitions:
+  Username:
+    type: "string"
+    description: "The username of a user in the CRM database"
+    example: "djordjec"
+  Signature:
+    type: "string"
+    format: "sha256"
+    description: "Signature used for authentication, obtained by concatenating the current request payload with the sha256-encrypted password, and then sha256-encrypting the resulting string"
+    example: "028ba9af611925a0064012a6e6fd765b"
+  LoginRequest:
+    type: "object"
+    properties:
+      username:
+        $ref: "#/definitions/Username"
+      signature:
+        $ref: "#/definitions/Signature"
+  FetchInfoRequest:
+    type: "object"
+    properties:
+      addresses:
+        type: "array"
+        items:
+          type: "string"
+          format: "email"
+      username:
+        $ref: "#/definitions/Username"
+      signature:
+        $ref: "#/definitions/Signature"
+  CustomerId:
+    type: "integer"
+    format: "int32"
+    minimum: 1
+    description: "The internal ID used to identify a customer in the CRM"
+    example: 111
+  CustomerOpportunity:
+    type: "object"
+    description: "Model of an expected sales opportunity for the associated customer"
+    properties:
+      amount:
+        type: "integer"
+        format: "int32"
+        description: "Expected monetary gain, currency is not specified"
+        example: 100000
+      date:
+        type: "string"
+        format: "date"
+        description: "Date of the expected pay-off"
+      status:
+        type: "string"
+        description: "Descriptive string of how the opportunity is currently progressing"
+        example: "PENDING"
+  CustomerInfo:
+    type: "object"
+    description: "Model of all information regarding a single known customer from the CRM database"
+    properties:
+      customerId:
+        $ref: "#/definitions/CustomerId"
+      customerName:
+        type: "string"
+        description: "Name of the corporation or individual representing the customer"
+        example: "Joel Industries"
+      opportunities:
+        type: "array"
+        items:
+          $ref: "#/definitions/CustomerOpportunity"
+  EmailMessage:
+    type: "object"
+    description: "Model of a single email message within a thread"
+    properties:
+      sender:
+        type: "string"
+        format: "email"
+      recipient:
+        type: "array"
+        items:
+          type: "string"
+          format: "email"
+      subject:
+        type: "string"
+        example: "Re: Checking in..."
+      body:
+        type: "string"
+        format: "text/html"
+        example: "<div>Hello there!</div>"
+      date:
+        type: "string"
+        format: "date-time"
+        description: "Date when the email message was sent"
+  SyncRequest:
+    type: "object"
+    properties:
+      messages:
+        type: "array"
+        items:
+          $ref: "#/definitions/EmailMessage"
+      username:
+        $ref: "#/definitions/Username"
+      signature:
+        $ref: "#/definitions/Signature"
+  ThreadId:
+    type: "integer"
+    format: "int32"
+    minimum: 1
+    description: "The internal ID used to identify an email thread in the CRM"
+    example: 222
+  EmailId:
+    type: "integer"
+    format: "int32"
+    minimum: 1
+    description: "The internal ID used to identify an email message in the CRM"
+    example: 333
+  SyncResponse:
+    type: "object"
+    properties:
+      requested:
+        type: "integer"
+        format: "int32"
+        description: "Number of emails that were requested to be synced"
+        example: 4
+      inserted:
+        type: "integer"
+        format: "int32"
+        description: "Number of new emails that were synced to the CRM (the remainder is assumed to have already existed in the CRM database)"
+        example: 2
+      threadId:
+        $ref: "#/definitions/ThreadId"
+      emailId:
+        type: "array"
+        items:
+          $ref: "#/definitions/EmailId"
+  SyncAttachmentRequest:
+    type: "object"
+    properties:
+      emailId:
+        $ref: "#/definitions/EmailId"
+      ord:
+        type: "integer"
+        format: "int32"
+        minimum: 1
+        description: "Position of the attachment within the containing email message, this must be unique for each attachment in the email"
+        example: 1
+      fileName:
+        type: "string"
+        format: "file-name"
+        example: "figure1a.jpg"
+      fileContent:
+        type: "string"
+        format: "byte"
+        description: "Base64-encoded content of the attached file"
+        example: "U3dhZ2dlciByb2Nrcw=="
+      username:
+        $ref: "#/definitions/Username"
+      signature:
+        $ref: "#/definitions/Signature"
+  StatusResponse:
+    type: "object"
+    description: "Generic API response"
+    properties:
+      status:
+        type: "integer"
+        format: "int32"
+        description: "A three-digit code according to one of the HTTP status codes"
+        example: "200"
+      message:
+        type: "string"
+        description: "A descriptive message detailing the error, in case one arose"
+        example: "OK"
+  ErrorResponse:
+    type: "object"
+    description: "Generic API error response"
+    properties:
+      status:
+        type: "integer"
+        format: "int32"
+        description: "A three-digit code according to one of the HTTP status codes"
+        example: "500"
+      message:
+        type: "string"
+        description: "A descriptive message detailing the error, in case one arose"
+        example: "Internal Server Error"
