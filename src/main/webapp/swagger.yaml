@@ -26,7 +26,6 @@ paths:
       parameters:
       - in: "body"
         name: "body"
-        description: "Username and signature"
         required: true
         schema:
           $ref: "#/definitions/LoginRequest"
@@ -50,7 +49,6 @@ paths:
       parameters:
       - in: "body"
         name: "body"
-        description: "Addresses array, username and signature"
         required: true
         schema:
           $ref: "#/definitions/FetchInfoRequest"
@@ -74,7 +72,6 @@ paths:
       parameters:
       - in: "body"
         name: "body"
-        description: "Messages array, username and signature"
         required: true
         schema:
           $ref: "#/definitions/SyncRequest"
@@ -98,7 +95,6 @@ paths:
       parameters:
       - in: "body"
         name: "body"
-        description: "Email ID, ord, file name, file content, username and signature"
         required: true
         schema:
           $ref: "#/definitions/SyncAttachmentRequest"
