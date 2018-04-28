@@ -14,6 +14,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.json.JSONException;
@@ -33,7 +35,7 @@ public class FetchThreads {
     private ServletContext sContext; 
     
     @GET
-    public String fetch(@QueryParam("customerId") Integer customerId) throws JSONException{
+    public Response fetch(@QueryParam("customerId") Integer customerId) throws JSONException{
 //http://localhost:8084/PO_CRM_stub/api/fetchThreads?customerId=4
 
         StringBuilder s = new StringBuilder();
@@ -41,21 +43,27 @@ public class FetchThreads {
         s.append("<div style = 'margin:10px;'>");
         s.append("Select customer:<form><select name=\"customerId\" onchange=\"this.form.submit();\"><option value = \"0\"></option>");
         List<Customer> customerList = Customer.selectAll();
+        boolean found = false;
         for(int i = 0; i < customerList.size(); i++){
             Customer currentCustomer = customerList.get(i);
+            s.append("<option value = \"").append(currentCustomer.getId()).append("\"");
             if(customerId == currentCustomer.getId()){
-                s.append("<option value = \"").append(currentCustomer.getId()).append("\" selected>").append(currentCustomer.getName()).append("</option>");
+                s.append(" selected");
+                found = true;
             }
-            else{
-                s.append("<option value = \"").append(currentCustomer.getId()).append("\">").append(currentCustomer.getName()).append("</option>");
-            }
+            s.append(">").append(currentCustomer.getName()).append("</option>");
         }
         s.append("</select></form><br />");
             
         if(customerId != null){
+        	
+        	if (!found) {
+        		return Response.status(Status.NOT_FOUND).build();
+        	}
+        	
             List<Thread> threads = Thread.selectThreads(customerId);
             if(threads != null){
-                ArrayList<List<Email>> mailThreads = new ArrayList();
+                ArrayList<List<Email>> mailThreads = new ArrayList<List<Email>>();
             
                 for(int i = 0; i < threads.size(); i++){
                     mailThreads.add(Email.findByThreadId(threads.get(i).getId()));
@@ -94,7 +102,7 @@ public class FetchThreads {
             
         }
        
-        return s.toString();
+        return Response.ok(s.toString()).build();
 
     }
 }
